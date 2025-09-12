@@ -17,6 +17,7 @@ import {
   BrainCircuit,
   Vegan,
   Code,
+  BookOpenCheck,
 } from 'lucide-react';
 import PageHeader from '@/components/page-header';
 
@@ -129,6 +130,21 @@ export default function DashboardPage() {
             </Card>
           ))}
         </div>
+      </div>
+      
+      <div>
+        <Card className="bg-card">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                    <BookOpenCheck className="w-6 h-6 text-primary" />
+                    Why is a Balanced Lifestyle Important?
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="text-muted-foreground space-y-2">
+                <p>For young adults and teenagers, establishing a balanced lifestyle is crucial. It's not just about juggling school, social life, and hobbies; it's about building a strong foundation for future health and well-being.</p>
+                <p>A balanced approach to nutrition, exercise, sleep, and mental wellness helps improve focus, manage stress, and boost energy levels. Adopting these healthy habits early on paves the way for a more resilient, successful, and fulfilling life.</p>
+            </CardContent>
+        </Card>
       </div>
 
       <div>
