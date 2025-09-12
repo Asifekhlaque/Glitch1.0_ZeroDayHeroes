@@ -8,32 +8,32 @@
     },
     {
       "id": "squats",
-      "description": "A person doing squats",
-      "imageUrl": "https://picsum.photos/seed/squat/600/400",
+      "description": "A person doing squats with a barbell",
+      "imageUrl": "https://images.unsplash.com/photo-1599058917212-d750089bc07e?q=80&w=600&h=400&fit=crop",
       "imageHint": "woman squat"
     },
     {
       "id": "plank",
       "description": "A person holding a plank position",
-      "imageUrl": "https://picsum.photos/seed/plank/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&h=400&fit=crop",
       "imageHint": "woman plank"
     },
     {
       "id": "jumping-jacks",
-      "description": "A person doing jumping jacks",
-      "imageUrl": "https://picsum.photos/seed/jumpingjack/600/400",
+      "description": "A person doing jumping jacks outdoors",
+      "imageUrl": "https://images.unsplash.com/photo-1614926102351-3344d76f3d54?q=80&w=600&h=400&fit=crop",
       "imageHint": "woman jumping"
     },
     {
       "id": "lunges",
-      "description": "A person doing lunges",
-      "imageUrl": "https://picsum.photos/seed/lunge/600/400",
+      "description": "A person doing lunges on a yoga mat",
+      "imageUrl": "https://images.unsplash.com/photo-1598971458058-189635562768?q=80&w=600&h=400&fit=crop",
       "imageHint": "woman lunge"
     },
     {
       "id": "bicep-curls",
       "description": "A person doing bicep curls with dumbbells",
-      "imageUrl": "https://picsum.photos/seed/bicepcurl/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&h=400&fit=crop",
       "imageHint": "man dumbbell"
     }
   ]
