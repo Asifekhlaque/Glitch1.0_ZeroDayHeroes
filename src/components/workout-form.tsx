@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -31,8 +32,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Sparkles } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2, Sparkles, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 const formSchema = z.object({
   experienceLevel: z.enum(["Beginner", "Intermediate", "Advanced"]),
@@ -44,6 +47,7 @@ const formSchema = z.object({
 export default function WorkoutForm() {
     const [workoutPlan, setWorkoutPlan] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [apiError, setApiError] = useState<string | null>(null);
     const { toast } = useToast();
   
     const form = useForm<z.infer<typeof formSchema>>({
@@ -59,15 +63,22 @@ export default function WorkoutForm() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
       setIsLoading(true);
       setWorkoutPlan(null);
+      setApiError(null);
       try {
         const result = await getWorkoutPlan(values);
         setWorkoutPlan(result.workoutPlan);
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Error Generating Plan",
-          description: "There was an issue creating your workout plan. Please try again.",
-        });
+      } catch (error: any) {
+        if (error.message && error.message.includes("SERVICE_DISABLED")) {
+          const projectIdMatch = error.message.match(/project\/(\d+)/);
+          const projectId = projectIdMatch ? projectIdMatch[1] : null;
+          setApiError(projectId);
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Error Generating Plan",
+            description: "There was an issue creating your workout plan. Please try again.",
+          });
+        }
         console.error(error);
       } finally {
         setIsLoading(false);
@@ -76,6 +87,25 @@ export default function WorkoutForm() {
   
     return (
       <>
+        {apiError && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Action Required: Enable Generative Language API</AlertTitle>
+            <AlertDescription>
+              To use this AI feature, you must enable the Generative Language API in your Google Cloud project.
+              <Button asChild variant="link" className="p-0 h-auto ml-1">
+                <Link 
+                  href={`https://console.developers.google.com/apis/api/generativelanguage.googleapis.com/overview?project=${apiError}`} 
+                  target="_blank"
+                >
+                  Click here to enable it.
+                </Link>
+              </Button>
+               After enabling, wait a few minutes and try again.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Card>
