@@ -188,11 +188,12 @@ export default function MeditationTimer() {
     const audioContext = audioContextRef.current;
     const gainNode = gainRef.current;
     if (audioContext && gainNode) {
-        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.1);
+        gainNode.gain.cancelScheduledValues(audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
     }
   };
 
-  const progressPercentage = (timeLeft / MEDITATION_DURATION) * 100;
+  const progressPercentage = ((MEDITATION_DURATION - timeLeft) / MEDITATION_DURATION) * 100;
   const isFinished = timeLeft === 0;
 
   return (
@@ -219,7 +220,6 @@ export default function MeditationTimer() {
           onClick={resetTimer}
           variant="outline"
           size="lg"
-          disabled={isActive}
         >
           <RotateCcw className="mr-2" />
           Reset
