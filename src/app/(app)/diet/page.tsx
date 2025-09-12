@@ -136,7 +136,7 @@ export default function DietPage() {
                       <ReactMarkdown>{samplePlans.maintain.nonVeg}</ReactMarkdown>
                     </div>
                   </TabsContent>
-                  <TabsContent value>
+                  <TabsContent value="veg">
                     <div className="prose prose-stone dark:prose-invert max-w-none p-4 rounded-md bg-muted/50">
                       <ReactMarkdown>{samplePlans.maintain.veg}</ReactMarkdown>
                     </div>
