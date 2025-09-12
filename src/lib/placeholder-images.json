@@ -3,37 +3,37 @@
     {
       "id": "pushups",
       "description": "A person doing push-ups",
-      "imageUrl": "https://images.unsplash.com/photo-1547919322-05703295d85c?q=80&w=600&h=400&fit=crop",
-      "imageHint": "man pushup"
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=600&h=400&fit=crop",
+      "imageHint": "woman pushup"
     },
     {
       "id": "squats",
       "description": "A person doing squats with a barbell",
-      "imageUrl": "https://images.unsplash.com/photo-1599058917212-d750089bc07e?q=80&w=600&h=400&fit=crop",
-      "imageHint": "woman squat"
+      "imageUrl": "https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?q=80&w=600&h=400&fit=crop",
+      "imageHint": "woman barbell squat"
     },
     {
       "id": "plank",
       "description": "A person holding a plank position",
-      "imageUrl": "https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?q=80&w=600&h=400&fit=crop",
+      "imageUrl": "https://images.unsplash.com/photo-1544216717-3bbf52512659?q=80&w=600&h=400&fit=crop",
       "imageHint": "woman plank"
     },
     {
       "id": "jumping-jacks",
       "description": "A person doing jumping jacks outdoors",
-      "imageUrl": "https://images.unsplash.com/photo-1614926102351-3344d76f3d54?q=80&w=600&h=400&fit=crop",
+      "imageUrl": "https://images.unsplash.com/photo-1607567693489-319a277a8a82?q=80&w=600&h=400&fit=crop",
       "imageHint": "woman jumping"
     },
     {
       "id": "lunges",
       "description": "A person doing lunges on a yoga mat",
-      "imageUrl": "https://images.unsplash.com/photo-1598971458058-189635562768?q=80&w=600&h=400&fit=crop",
+      "imageUrl": "https://images.unsplash.com/photo-1597962812953-7053c5243a42?q=80&w=600&h=400&fit=crop",
       "imageHint": "woman lunge"
     },
     {
       "id": "bicep-curls",
       "description": "A person doing bicep curls with dumbbells",
-      "imageUrl": "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&h=400&fit=crop",
+      "imageUrl": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600&h=400&fit=crop",
       "imageHint": "man dumbbell"
     }
   ]
