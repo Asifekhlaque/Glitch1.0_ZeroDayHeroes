@@ -26,6 +26,7 @@ export default function SleepSchedule() {
   const [showScheduledToast, setShowScheduledToast] = useState(false);
   const [showCanceledToast, setShowCanceledToast] = useState(false);
   const [scheduledToastTime, setScheduledToastTime] = useState('');
+  const [toastBedtime, setToastBedtime] = useState('');
 
   const scheduleNotification = (bedtimeDate: Date) => {
     if (timeoutRef.current) {
@@ -38,6 +39,7 @@ export default function SleepSchedule() {
     if (timeUntilBedtime > 0) {
       timeoutRef.current = setTimeout(() => {
         playNotificationSound();
+        setToastBedtime(bedtimeDate.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit'}));
         setShowBedtimeToast(true);
         setScheduledTime(null);
         try {
@@ -66,6 +68,7 @@ export default function SleepSchedule() {
     } catch (error) {
       console.error("Failed to read from localStorage", error);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initializeAudio = () => {
@@ -130,12 +133,12 @@ export default function SleepSchedule() {
     if (showBedtimeToast) {
       toast({
         title: "🌙 Time for bed!",
-        description: `It's ${new Date(`1970-01-01T${bedtime}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}. Time to wind down and get some rest.`,
+        description: `It's ${toastBedtime}. Time to wind down and get some rest.`,
         duration: 10000,
       });
       setShowBedtimeToast(false);
     }
-  }, [showBedtimeToast, bedtime, toast]);
+  }, [showBedtimeToast, toastBedtime, toast]);
 
   useEffect(() => {
     if (showScheduledToast) {

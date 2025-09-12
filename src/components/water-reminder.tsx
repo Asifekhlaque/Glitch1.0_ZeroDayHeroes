@@ -84,6 +84,12 @@ export default function WaterReminder() {
           setIntervalMinutes(interval);
           setIsActive(true);
           setTimeLeft(Math.round((endTime - Date.now()) / 1000));
+        } else if (active) {
+            // Timer expired while tab was closed
+            setShowHydrationToast(true);
+            const newEndTime = Date.now() + interval * 60 * 1000;
+            localStorage.setItem("hydrationReminder", JSON.stringify({ interval, endTime: newEndTime, active: true }));
+            setTimeLeft(interval * 60);
         } else {
           localStorage.removeItem("hydrationReminder");
         }
@@ -151,32 +157,38 @@ export default function WaterReminder() {
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
+
     if (isActive) {
       intervalId = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
+        try {
+          const savedState = localStorage.getItem("hydrationReminder");
+          if (!savedState) {
+            setIsActive(false);
+            return;
+          }
+          const { endTime, interval } = JSON.parse(savedState);
+          const remaining = Math.round((endTime - Date.now()) / 1000);
+
+          if (remaining <= 0) {
             playNotificationSound();
             setShowHydrationToast(true);
-            const newEndTime = Date.now() + intervalMinutes * 60 * 1000;
-            try {
-              localStorage.setItem("hydrationReminder", JSON.stringify({
-                interval: intervalMinutes,
-                endTime: newEndTime,
-                active: true,
-              }));
-            } catch (error) {
-              console.error("Failed to write to localStorage", error);
-            }
-            return intervalMinutes * 60; // Reset timer
+            const newEndTime = Date.now() + interval * 60 * 1000;
+            localStorage.setItem("hydrationReminder", JSON.stringify({ interval, endTime: newEndTime, active: true }));
+            setTimeLeft(interval * 60);
+          } else {
+            setTimeLeft(remaining);
           }
-          return prev - 1;
-        });
+        } catch (error) {
+          console.error("Error in timer interval", error);
+          setIsActive(false);
+        }
       }, 1000);
     }
+
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isActive, intervalMinutes]);
+  }, [isActive]);
 
   useEffect(() => {
     if (showHydrationToast) {
@@ -213,7 +225,7 @@ export default function WaterReminder() {
     if (!isActive) {
       setTimeLeft(intervalMinutes * 60);
     }
-  }, [intervalMinutes, isActive]);
+  }, [intervalMinutes]);
 
   const handleStart = () => {
     const duration = intervalMinutes * 60;
@@ -237,6 +249,7 @@ export default function WaterReminder() {
   const handleStop = () => {
     setIsActive(false);
     setShowStoppedToast(true);
+    setTimeLeft(intervalMinutes * 60);
     try {
       localStorage.removeItem("hydrationReminder");
     } catch (error) {
@@ -262,7 +275,11 @@ export default function WaterReminder() {
             type="number"
             min="1"
             value={intervalMinutes}
-            onChange={(e) => setIntervalMinutes(Math.max(1, parseInt(e.target.value) || 1))}
+            onChange={(e) => {
+              if (!isActive) {
+                setIntervalMinutes(Math.max(1, parseInt(e.target.value) || 1))
+              }
+            }}
             disabled={isActive}
             className="text-lg"
           />
