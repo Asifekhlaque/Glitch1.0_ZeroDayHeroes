@@ -48,6 +48,7 @@ export default function WorkoutForm() {
     const [workoutPlan, setWorkoutPlan] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
+    const [isKeyBlocked, setIsKeyBlocked] = useState(false);
     const { toast } = useToast();
   
     const form = useForm<z.infer<typeof formSchema>>({
@@ -64,6 +65,8 @@ export default function WorkoutForm() {
       setIsLoading(true);
       setWorkoutPlan(null);
       setApiError(null);
+      setIsKeyBlocked(false);
+
       try {
         const result = await getWorkoutPlan(values);
         setWorkoutPlan(result.workoutPlan);
@@ -72,6 +75,8 @@ export default function WorkoutForm() {
           const projectIdMatch = error.message.match(/project\/(\d+)/);
           const projectId = projectIdMatch ? projectIdMatch[1] : null;
           setApiError(projectId);
+        } else if (error.message && error.message.includes("API_KEY_SERVICE_BLOCKED")) {
+          setIsKeyBlocked(true);
         } else {
           toast({
             variant: "destructive",
@@ -102,6 +107,25 @@ export default function WorkoutForm() {
                 </Link>
               </Button>
                After enabling, wait a few minutes and try again.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {isKeyBlocked && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Action Required: API Key Restrictions</AlertTitle>
+            <AlertDescription>
+              Your API key has restrictions that are blocking requests from this app. Please go to the 
+              <Button asChild variant="link" className="p-0 h-auto mx-1">
+                <Link
+                  href="https://console.cloud.google.com/apis/credentials"
+                  target="_blank"
+                >
+                  Google Cloud Console
+                </Link>
+              </Button>
+               and ensure your API key has no application or API restrictions. After removing them, wait a few minutes and try again.
             </AlertDescription>
           </Alert>
         )}
