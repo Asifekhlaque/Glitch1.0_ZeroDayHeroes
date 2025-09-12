@@ -544,7 +544,7 @@ const SidebarMenuButton = React.forwardRef<
 >(
   (
     {
-      asChild,
+      asChild = false,
       isActive = false,
       variant = "default",
       size = "default",
@@ -577,7 +577,7 @@ const SidebarMenuButton = React.forwardRef<
 
     return (
       <Tooltip>
-        <TooltipTrigger asChild={asChild}>{button}</TooltipTrigger>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
         <TooltipContent
           side="right"
           align="center"
@@ -759,5 +759,7 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
+    
 
     
