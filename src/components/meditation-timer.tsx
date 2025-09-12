@@ -200,6 +200,7 @@ export default function MeditationTimer() {
 
   const progressPercentage = ((MEDITATION_DURATION - timeLeft) / MEDITATION_DURATION) * 100;
   const isFinished = timeLeft === 0;
+  const hasStarted = timeLeft < MEDITATION_DURATION;
 
   const getButtonContent = () => {
       if (isFinished) {
@@ -242,6 +243,12 @@ export default function MeditationTimer() {
           {icon}
           {text}
         </Button>
+        {!isActive && hasStarted && !isFinished && (
+          <Button onClick={resetTimer} size="lg" variant="outline">
+            <RotateCcw className="mr-2" />
+            Reset
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
