@@ -36,8 +36,8 @@ export default function SleepSchedule() {
     const audioContext = audioContextRef.current;
     if (!audioContext) return;
 
-    // Create a more pleasant, chime-like sound
-    const playNote = (frequency: number, startTime: number, duration: number) => {
+    // Create a more pleasant, chime-like sound that lasts for 5 seconds
+    const playNote = (frequency: number, startTime: number) => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -46,18 +46,18 @@ export default function SleepSchedule() {
       
       gainNode.gain.setValueAtTime(0, audioContext.currentTime);
       gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + startTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + startTime + duration);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 5);
       
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
       
       oscillator.start(audioContext.currentTime + startTime);
-      oscillator.stop(audioContext.currentTime + startTime + duration);
+      oscillator.stop(audioContext.currentTime + 5);
     };
 
-    playNote(523.25, 0, 0.5); // C5
-    playNote(659.25, 0.1, 0.5); // E5
-    playNote(783.99, 0.2, 0.5); // G5
+    playNote(523.25, 0); // C5
+    playNote(659.25, 0.5); // E5
+    playNote(783.99, 1); // G5
   };
   
   useEffect(() => {
