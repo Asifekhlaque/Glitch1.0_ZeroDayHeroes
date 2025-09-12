@@ -18,7 +18,7 @@ import {
   Dumbbell,
   Flower2,
   BedDouble,
-  Sparkles,
+  Activity,
 } from "lucide-react";
 
 const navItems = [
@@ -38,7 +38,7 @@ export default function AppSidebar() {
       <SidebarHeader>
         <div className="flex items-center gap-2">
            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
+              <Activity className="h-5 w-5 text-primary-foreground" />
             </div>
             <h1 className="font-headline text-xl font-bold text-foreground">LifeBoost</h1>
         </div>
