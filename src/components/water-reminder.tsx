@@ -71,6 +71,9 @@ export default function WaterReminder() {
   const { toast } = useToast();
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioInitialized = useRef(false);
+  const [showHydrationToast, setShowHydrationToast] = useState(false);
+  const [showStartedToast, setShowStartedToast] = useState(false);
+  const [showStoppedToast, setShowStoppedToast] = useState(false);
 
   const initializeAudio = () => {
     if (audioInitialized.current || typeof window === 'undefined') return;
@@ -85,7 +88,10 @@ export default function WaterReminder() {
     const audioContext = audioContextRef.current;
     if (!audioContext) return;
 
-    // Create a more pleasant, chime-like sound that lasts for 5 seconds
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+    
     const playNote = (frequency: number, startTime: number) => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
@@ -125,11 +131,7 @@ export default function WaterReminder() {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             playNotificationSound();
-            toast({
-              title: "💧 Time to hydrate!",
-              description: "Take a moment to drink a glass of water.",
-              duration: 10000,
-            });
+            setShowHydrationToast(true);
             return intervalMinutes * 60; // Reset timer
           }
           return prev - 1;
@@ -139,7 +141,38 @@ export default function WaterReminder() {
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isActive, intervalMinutes, toast]);
+  }, [isActive, intervalMinutes]);
+
+  useEffect(() => {
+    if (showHydrationToast) {
+      toast({
+        title: "💧 Time to hydrate!",
+        description: "Take a moment to drink a glass of water.",
+        duration: 10000,
+      });
+      setShowHydrationToast(false);
+    }
+  }, [showHydrationToast, toast]);
+
+  useEffect(() => {
+    if (showStartedToast) {
+      toast({
+        title: "Reminders Started!",
+        description: `We'll remind you to drink water every ${intervalMinutes} minutes.`,
+      });
+      setShowStartedToast(false);
+    }
+  }, [showStartedToast, intervalMinutes, toast]);
+
+  useEffect(() => {
+    if (showStoppedToast) {
+      toast({
+        title: "Reminders Stopped",
+        description: "Hydration reminders have been paused.",
+      });
+      setShowStoppedToast(false);
+    }
+  }, [showStoppedToast, toast]);
 
   useEffect(() => {
     if (!isActive) {
@@ -150,18 +183,12 @@ export default function WaterReminder() {
   const handleStart = () => {
     setTimeLeft(intervalMinutes * 60);
     setIsActive(true);
-    toast({
-      title: "Reminders Started!",
-      description: `We'll remind you to drink water every ${intervalMinutes} minutes.`,
-    });
+    setShowStartedToast(true);
   };
 
   const handleStop = () => {
     setIsActive(false);
-    toast({
-      title: "Reminders Stopped",
-      description: "Hydration reminders have been paused.",
-    });
+    setShowStoppedToast(true);
   };
 
   const progress = (timeLeft / (intervalMinutes * 60)) * 100;

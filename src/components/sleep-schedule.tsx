@@ -22,6 +22,10 @@ export default function SleepSchedule() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioInitialized = useRef(false);
+  const [showBedtimeToast, setShowBedtimeToast] = useState(false);
+  const [showScheduledToast, setShowScheduledToast] = useState(false);
+  const [showCanceledToast, setShowCanceledToast] = useState(false);
+  const [scheduledToastTime, setScheduledToastTime] = useState('');
 
   const initializeAudio = () => {
     if (audioInitialized.current || typeof window === 'undefined') return;
@@ -36,7 +40,10 @@ export default function SleepSchedule() {
     const audioContext = audioContextRef.current;
     if (!audioContext) return;
 
-    // Create a more pleasant, chime-like sound that lasts for 5 seconds
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+
     const playNote = (frequency: number, startTime: number) => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
@@ -65,8 +72,43 @@ export default function SleepSchedule() {
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close();
       }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (showBedtimeToast) {
+      toast({
+        title: "🌙 Time for bed!",
+        description: `It's ${bedtime}. Time to wind down and get some rest.`,
+        duration: 10000,
+      });
+      setShowBedtimeToast(false);
+    }
+  }, [showBedtimeToast, bedtime, toast]);
+
+  useEffect(() => {
+    if (showScheduledToast) {
+       toast({
+        title: "Bedtime Scheduled!",
+        description: `We'll remind you to go to bed at ${scheduledToastTime}.`,
+      });
+      setShowScheduledToast(false);
+    }
+  }, [showScheduledToast, scheduledToastTime, toast]);
+
+  useEffect(() => {
+    if (showCanceledToast) {
+      toast({
+        title: "Bedtime Reminder Canceled",
+        description: "Your bedtime reminder has been turned off.",
+      });
+      setShowCanceledToast(false);
+    }
+  }, [showCanceledToast, toast]);
+
 
   const handleSetBedtime = () => {
     if (timeoutRef.current) {
@@ -86,21 +128,13 @@ export default function SleepSchedule() {
     }
 
     const timeUntilBedtime = bedtimeDate.getTime() - now.getTime();
-
-    toast({
-      title: "Bedtime Scheduled!",
-      description: `We'll remind you to go to bed at ${bedtimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.`,
-    });
-
-    // In a real app, this would be handled by a service worker or server-side push notification.
-    // This timeout only works if the user keeps the tab open.
+    
+    setScheduledToastTime(bedtimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+    setShowScheduledToast(true);
+    
     timeoutRef.current = setTimeout(() => {
       playNotificationSound();
-      toast({
-        title: "🌙 Time for bed!",
-        description: `It's ${bedtime}. Time to wind down and get some rest.`,
-        duration: 10000,
-      });
+      setShowBedtimeToast(true);
       setScheduledTime(null);
     }, timeUntilBedtime);
   };
@@ -109,10 +143,7 @@ export default function SleepSchedule() {
     if(timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       setScheduledTime(null);
-      toast({
-        title: "Bedtime Reminder Canceled",
-        description: "Your bedtime reminder has been turned off.",
-      });
+      setShowCanceledToast(true);
     }
   };
 
