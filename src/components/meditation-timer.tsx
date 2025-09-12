@@ -91,6 +91,39 @@ export default function MeditationTimer() {
     gainRef.current = gainNode;
     audioInitialized.current = true;
   };
+  
+  const playCompletionSound = () => {
+    initializeAudio();
+    const audioContext = audioContextRef.current;
+    if (!audioContext) return;
+  
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+  
+    const playNote = (frequency: number, startTime: number, duration: number) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+  
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + startTime);
+      
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime + startTime);
+      gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + startTime + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + startTime + duration);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start(audioContext.currentTime + startTime);
+      oscillator.stop(audioContext.currentTime + startTime + duration);
+    };
+  
+    // A simple, pleasant completion chime
+    playNote(523.25, 0, 0.3); // C5
+    playNote(659.25, 0.2, 0.3); // E5
+    playNote(783.99, 0.4, 0.4); // G5
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -100,9 +133,10 @@ export default function MeditationTimer() {
       }, 1000);
     } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
+      playCompletionSound();
       toast({
-        title: "Meditation Complete!",
-        description: "You've successfully completed your 2-minute meditation.",
+        title: "Congratulations!",
+        description: "You have completed your Meditation.",
       });
       if (gainRef.current && audioContextRef.current) {
         gainRef.current.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + 0.5);
