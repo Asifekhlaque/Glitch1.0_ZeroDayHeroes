@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const MEDITATION_DURATION = 120; // 2 minutes in seconds
 
-const CircularProgress = ({ progress }: { progress: number }) => {
+const CircularProgress = ({ progress, timeLeft }: { progress: number, timeLeft: number }) => {
   const radius = 90;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (progress / 100) * circumference;
@@ -47,11 +47,11 @@ const CircularProgress = ({ progress }: { progress: number }) => {
       </svg>
       <div className="absolute flex flex-col items-center">
         <span className="font-mono text-5xl font-bold text-foreground">
-          {Math.floor((MEDITATION_DURATION * progress) / 100 / 60)
+          {Math.floor(timeLeft / 60)
             .toString()
             .padStart(2, "0")}
           :
-          {Math.floor(((MEDITATION_DURATION * progress) / 100) % 60)
+          {(timeLeft % 60)
             .toString()
             .padStart(2, "0")}
         </span>
@@ -202,7 +202,7 @@ export default function MeditationTimer() {
         <CardDescription>A 2-minute meditation session.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center gap-6">
-        <CircularProgress progress={progressPercentage} />
+        <CircularProgress progress={progressPercentage} timeLeft={timeLeft} />
         <div className="flex items-center gap-2 text-muted-foreground p-2 rounded-lg bg-muted">
           <Music2 className="w-5 h-5" />
           <span>
