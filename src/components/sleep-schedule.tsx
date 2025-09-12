@@ -52,7 +52,7 @@ export default function SleepSchedule() {
     setTimeout(() => {
       gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
       setTimeout(() => oscillator.stop(), 500);
-    }, 10000); // Play for 10 seconds
+    }, 5000); // Play for 5 seconds
   };
   
   useEffect(() => {
