@@ -52,7 +52,7 @@ const generateDietPlanPrompt = ai.definePrompt({
   Vegetarian: {{#if vegetarian}}Yes{{else}}No{{/if}}
   Goal: {{{goal}}}
 
-  Provide a diet plan that is tailored to their specific needs and goals.  The diet plan should be realistic and easy to follow. It should include a variety of foods from all food groups, and it should be sustainable over the long term.
+  Provide a diet plan that is tailored to their specific needs and goals.  The diet plan should be realistic and easy to follow. It should include a variety of foods from all food groups, and it should be sustainable over the long term. Present the diet plan in a clear, easy-to-understand point-based format.
 `,
 });
 
