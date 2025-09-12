@@ -1,5 +1,6 @@
 import AppSidebar from '@/components/app-sidebar';
 import AppHeader from '@/components/app-header';
+import AppBottomNav from '@/components/app-bottom-nav';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 
 export default function AppLayout({
@@ -12,10 +13,11 @@ export default function AppLayout({
         <AppHeader />
         <AppSidebar />
         <SidebarInset>
-          <div className="min-h-screen lg:py-8 lg:px-16 px-4 py-6 pt-20 lg:pt-8">
+          <div className="min-h-screen lg:py-8 lg:px-16 px-4 py-6 pt-20 lg:pt-8 pb-24 lg:pb-8">
             {children}
           </div>
         </SidebarInset>
+        <AppBottomNav />
     </SidebarProvider>
   );
 }
