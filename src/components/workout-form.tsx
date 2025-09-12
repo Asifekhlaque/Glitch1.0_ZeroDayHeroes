@@ -41,7 +41,7 @@ const formSchema = z.object({
   goal: z.enum(["Lose Weight", "Gain Muscle", "Maintain Fitness"]),
 });
 
-function WorkoutFormContent() {
+export default function WorkoutForm() {
     const [workoutPlan, setWorkoutPlan] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
@@ -211,8 +211,4 @@ function WorkoutFormContent() {
         )}
       </>
     );
-}
-
-export default function WorkoutForm() {
-    return <WorkoutFormContent />;
 }
