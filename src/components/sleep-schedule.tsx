@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,6 +19,48 @@ export default function SleepSchedule() {
   const [scheduledTime, setScheduledTime] = useState<string | null>(null);
   const { toast } = useToast();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioInitialized = useRef(false);
+
+  const initializeAudio = () => {
+    if (audioInitialized.current || typeof window === 'undefined') return;
+    
+    const context = new window.AudioContext();
+    audioContextRef.current = context;
+    audioInitialized.current = true;
+  };
+
+  const playNotificationSound = () => {
+    initializeAudio();
+    const audioContext = audioContextRef.current;
+    if (!audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.1);
+    
+    oscillator.start();
+
+    setTimeout(() => {
+      gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+      setTimeout(() => oscillator.stop(), 500);
+    }, 20000); // Play for 20 seconds
+  };
+  
+  useEffect(() => {
+    return () => {
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close();
+      }
+    };
+  }, []);
 
   const handleSetBedtime = () => {
     if (timeoutRef.current) {
@@ -47,10 +89,11 @@ export default function SleepSchedule() {
     // In a real app, this would be handled by a service worker or server-side push notification.
     // This timeout only works if the user keeps the tab open.
     timeoutRef.current = setTimeout(() => {
+      playNotificationSound();
       toast({
         title: "🌙 Time for bed!",
         description: `It's ${bedtime}. Time to wind down and get some rest.`,
-        duration: 10000,
+        duration: 20000,
       });
       setScheduledTime(null);
     }, timeUntilBedtime);

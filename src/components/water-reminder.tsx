@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -68,6 +68,49 @@ export default function WaterReminder() {
   const [timeLeft, setTimeLeft] = useState(intervalMinutes * 60);
   const [isActive, setIsActive] = useState(false);
   const { toast } = useToast();
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioInitialized = useRef(false);
+
+  const initializeAudio = () => {
+    if (audioInitialized.current || typeof window === 'undefined') return;
+    
+    const context = new window.AudioContext();
+    audioContextRef.current = context;
+    audioInitialized.current = true;
+  };
+
+  const playNotificationSound = () => {
+    initializeAudio();
+    const audioContext = audioContextRef.current;
+    if (!audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.1);
+    
+    oscillator.start();
+
+    setTimeout(() => {
+      gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+      setTimeout(() => oscillator.stop(), 500);
+    }, 20000); // Play for 20 seconds
+  };
+  
+  useEffect(() => {
+    return () => {
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close();
+      }
+    };
+  }, []);
+
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
@@ -75,9 +118,11 @@ export default function WaterReminder() {
       intervalId = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
+            playNotificationSound();
             toast({
               title: "💧 Time to hydrate!",
               description: "Take a moment to drink a glass of water.",
+              duration: 20000,
             });
             return intervalMinutes * 60; // Reset timer
           }
@@ -109,7 +154,7 @@ export default function WaterReminder() {
     setIsActive(false);
     toast({
       title: "Reminders Stopped",
-      description: "Water reminders have been paused.",
+      description: "Hydration reminders have been paused.",
     });
   };
 

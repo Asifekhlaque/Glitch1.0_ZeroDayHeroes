@@ -16,7 +16,7 @@ const navItems = [
   { href: "/diet", icon: UtensilsCrossed, label: "Diet" },
   { href: "/workout", icon: Dumbbell, label: "Workout" },
   { href: "/meditation", icon: Flower2, label: "Meditation" },
-  { href: "/water", icon: Droplets, label: "Water" },
+  { href: "/hydration", icon: Droplets, label: "Hydration" },
 ];
 
 export default function AppBottomNav() {

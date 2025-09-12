@@ -23,7 +23,7 @@ import {
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/water", icon: Droplets, label: "Water" },
+  { href: "/hydration", icon: Droplets, label: "Hydration" },
   { href: "/diet", icon: UtensilsCrossed, label: "Diet" },
   { href: "/workout", icon: Dumbbell, label: "Workout" },
   { href: "/meditation", icon: Flower2, label: "Meditation" },

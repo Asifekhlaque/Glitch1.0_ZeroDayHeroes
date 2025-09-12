@@ -22,9 +22,9 @@ import PageHeader from '@/components/page-header';
 const features = [
   {
     icon: <Droplets className="w-8 h-8 text-primary" />,
-    title: 'Water Reminder',
+    title: 'Hydration Reminder',
     description: 'Stay hydrated with timely reminders.',
-    href: '/water',
+    href: '/hydration',
     color: 'hover:border-blue-300',
   },
   {
