@@ -22,12 +22,12 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "/dashboard", icon: <LayoutDashboard />, label: "Dashboard" },
-  { href: "/water", icon: <Droplets />, label: "Water" },
-  { href: "/diet", icon: <UtensilsCrossed />, label: "Diet" },
-  { href: "/workout", icon: <Dumbbell />, label: "Workout" },
-  { href: "/meditation", icon: <Flower2 />, label: "Meditation" },
-  { href: "/sleep", icon: <BedDouble />, label: "Sleep" },
+  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/water", icon: Droplets, label: "Water" },
+  { href: "/diet", icon: UtensilsCrossed, label: "Diet" },
+  { href: "/workout", icon: Dumbbell, label: "Workout" },
+  { href: "/meditation", icon: Flower2, label: "Meditation" },
+  { href: "/sleep", icon: BedDouble, label: "Sleep" },
 ];
 
 export default function AppSidebar() {
@@ -46,16 +46,16 @@ export default function AppSidebar() {
       <SidebarMenu className="flex-1 p-2">
         {navItems.map((item) => (
           <SidebarMenuItem key={item.href}>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname === item.href}
-              tooltip={item.label}
-            >
-              <Link href={item.href}>
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            </SidebarMenuButton>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === item.href}
+                tooltip={item.label}
+              >
+                <Link href={item.href}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

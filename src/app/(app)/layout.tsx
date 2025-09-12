@@ -9,17 +9,13 @@ export default function AppLayout({
 }) {
   return (
     <SidebarProvider>
-      <AppHeader />
-      <AppSidebar />
-      <SidebarInset>
-        <div className="min-h-screen lg:py-8 lg:px-16 px-4 py-6 pt-20 lg:pt-8">
-          {children}
-        </div>
-      </SidebarInset>
+        <AppHeader />
+        <AppSidebar />
+        <SidebarInset>
+          <div className="min-h-screen lg:py-8 lg:px-16 px-4 py-6 pt-20 lg:pt-8">
+            {children}
+          </div>
+        </SidebarInset>
     </SidebarProvider>
   );
 }
-
-    
-
-    
