@@ -18,5 +18,10 @@ export function useIsMobile() {
     }
   }, [])
 
-  return isMobile
+  const [hasMounted, setHasMounted] = React.useState(false);
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  return hasMounted ? isMobile : false;
 }
