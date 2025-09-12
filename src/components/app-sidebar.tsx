@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -8,8 +9,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarTrigger,
-  SidebarFooter,
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
@@ -59,9 +58,6 @@ export default function AppSidebar() {
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
-      <SidebarFooter className="hidden md:flex">
-         <SidebarTrigger />
-      </SidebarFooter>
     </Sidebar>
   );
 }
