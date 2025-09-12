@@ -16,6 +16,7 @@ import {
   HeartPulse,
   BrainCircuit,
   Vegan,
+  Code,
 } from 'lucide-react';
 import PageHeader from '@/components/page-header';
 
@@ -129,6 +130,22 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
+
+      <div>
+        <Card className="bg-card">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                    <Code className="w-6 h-6 text-primary" />
+                    Development Team
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center text-muted-foreground">
+                <p className="font-medium">Asif Ekhlaque & Vishal Kumar</p>
+                <p className="text-sm">MCA 1, Amity University Patna</p>
+            </CardContent>
+        </Card>
+      </div>
+
     </div>
   );
 }
