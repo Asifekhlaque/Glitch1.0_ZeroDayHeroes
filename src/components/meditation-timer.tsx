@@ -63,8 +63,40 @@ const CircularProgress = ({ progress }: { progress: number }) => {
 export default function MeditationTimer() {
   const [timeLeft, setTimeLeft] = useState(MEDITATION_DURATION);
   const [isActive, setIsActive] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
+
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const oscillatorRef = useRef<OscillatorNode | null>(null);
+  const gainRef = useRef<GainNode | null>(null);
+
+  useEffect(() => {
+    // Web Audio API logic must run on the client
+    if (typeof window !== 'undefined' && !audioContextRef.current) {
+        const audioContext = new window.AudioContext();
+        audioContextRef.current = audioContext;
+
+        const oscillator = audioContext.createOscillator();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(220, audioContext.currentTime); // A gentle A3 note
+
+        const gainNode = audioContext.createGain();
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime); // Start silent
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.start();
+
+        oscillatorRef.current = oscillator;
+        gainRef.current = gainNode;
+    }
+
+    return () => {
+        // Clean up on unmount
+        if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+            audioContextRef.current.close();
+        }
+    };
+  }, []);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -72,19 +104,26 @@ export default function MeditationTimer() {
       interval = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
-      audioRef.current?.play();
+      
+      // Start or resume audio
+      if (audioContextRef.current && gainRef.current) {
+        if (audioContextRef.current.state === 'suspended') {
+            audioContextRef.current.resume();
+        }
+        gainRef.current.gain.linearRampToValueAtTime(0.1, audioContextRef.current.currentTime + 0.5);
+      }
+
     } else {
-      audioRef.current?.pause();
+       // Pause audio
+      if (gainRef.current && audioContextRef.current) {
+        gainRef.current.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + 0.5);
+      }
       if (timeLeft === 0 && isActive) {
         setIsActive(false);
         toast({
           title: "Meditation Complete!",
           description: "You've successfully completed your 2-minute meditation.",
         });
-        // Reset audio to the beginning
-        if (audioRef.current) {
-          audioRef.current.currentTime = 0;
-        }
       }
     }
     return () => {
@@ -101,10 +140,6 @@ export default function MeditationTimer() {
   const resetTimer = () => {
     setIsActive(false);
     setTimeLeft(MEDITATION_DURATION);
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
   };
 
   const progressPercentage = (timeLeft / MEDITATION_DURATION) * 100;
@@ -121,10 +156,9 @@ export default function MeditationTimer() {
         <div className="flex items-center gap-2 text-muted-foreground p-2 rounded-lg bg-muted">
           <Music2 className="w-5 h-5" />
           <span>
-            {isActive ? "Calm music is playing..." : "Music is paused"}
+            {isActive ? "Calm sound is playing..." : "Sound is paused"}
           </span>
         </div>
-        <audio ref={audioRef} src="/meditation-music.mp3" loop />
       </CardContent>
       <CardFooter className="flex justify-center gap-4">
         <Button onClick={toggleTimer} size="lg" disabled={isFinished}>
