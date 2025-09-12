@@ -81,9 +81,9 @@ export default function DietForm() {
 
   return (
     <>
-      <Card>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Card>
             <CardHeader>
               <CardTitle className="font-headline text-2xl">Your Details</CardTitle>
               <CardDescription>
@@ -188,9 +188,9 @@ export default function DietForm() {
                 Generate Plan
               </Button>
             </CardFooter>
-          </form>
-        </Form>
-      </Card>
+          </Card>
+        </form>
+      </Form>
 
       {isLoading && (
         <Card>
