@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -51,7 +52,7 @@ export default function SleepSchedule() {
     setTimeout(() => {
       gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
       setTimeout(() => oscillator.stop(), 500);
-    }, 20000); // Play for 20 seconds
+    }, 10000); // Play for 10 seconds
   };
   
   useEffect(() => {
@@ -93,7 +94,7 @@ export default function SleepSchedule() {
       toast({
         title: "🌙 Time for bed!",
         description: `It's ${bedtime}. Time to wind down and get some rest.`,
-        duration: 20000,
+        duration: 10000,
       });
       setScheduledTime(null);
     }, timeUntilBedtime);

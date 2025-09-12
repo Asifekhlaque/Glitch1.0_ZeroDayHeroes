@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -100,7 +101,7 @@ export default function WaterReminder() {
     setTimeout(() => {
       gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
       setTimeout(() => oscillator.stop(), 500);
-    }, 20000); // Play for 20 seconds
+    }, 10000); // Play for 10 seconds
   };
   
   useEffect(() => {
@@ -122,7 +123,7 @@ export default function WaterReminder() {
             toast({
               title: "💧 Time to hydrate!",
               description: "Take a moment to drink a glass of water.",
-              duration: 20000,
+              duration: 10000,
             });
             return intervalMinutes * 60; // Reset timer
           }
