@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "pushups",
+      "description": "A person doing push-ups",
+      "imageUrl": "https://picsum.photos/seed/pushup/600/400",
+      "imageHint": "man pushup"
+    },
+    {
+      "id": "squats",
+      "description": "A person doing squats",
+      "imageUrl": "https://picsum.photos/seed/squat/600/400",
+      "imageHint": "woman squat"
+    },
+    {
+      "id": "plank",
+      "description": "A person holding a plank position",
+      "imageUrl": "https://picsum.photos/seed/plank/600/400",
+      "imageHint": "woman plank"
+    },
+    {
+      "id": "jumping-jacks",
+      "description": "A person doing jumping jacks",
+      "imageUrl": "https://picsum.photos/seed/jumpingjack/600/400",
+      "imageHint": "woman jumping"
+    },
+    {
+      "id": "lunges",
+      "description": "A person doing lunges",
+      "imageUrl": "https://picsum.photos/seed/lunge/600/400",
+      "imageHint": "woman lunge"
+    },
+    {
+      "id": "bicep-curls",
+      "description": "A person doing bicep curls with dumbbells",
+      "imageUrl": "https://picsum.photos/seed/bicepcurl/600/400",
+      "imageHint": "man dumbbell"
+    }
+  ]
 }

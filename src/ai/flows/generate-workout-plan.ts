@@ -47,6 +47,7 @@ Height: {{{height}}} cm
 Weight: {{{weight}}} kg
 Fitness Goal: {{{goal}}}
 
+Present the workout plan in a clear, easy-to-understand point-based format.
 Workout Plan:`,
 });
 
