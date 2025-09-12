@@ -36,23 +36,28 @@ export default function SleepSchedule() {
     const audioContext = audioContextRef.current;
     if (!audioContext) return;
 
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    // Create a more pleasant, chime-like sound
+    const playNote = (frequency: number, startTime: number, duration: number) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
 
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + startTime + duration);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start(audioContext.currentTime + startTime);
+      oscillator.stop(audioContext.currentTime + startTime + duration);
+    };
 
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.1);
-    
-    oscillator.start();
-
-    setTimeout(() => {
-      gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
-      setTimeout(() => oscillator.stop(), 500);
-    }, 5000); // Play for 5 seconds
+    playNote(523.25, 0, 0.5); // C5
+    playNote(659.25, 0.1, 0.5); // E5
+    playNote(783.99, 0.2, 0.5); // G5
   };
   
   useEffect(() => {
