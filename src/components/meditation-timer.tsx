@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -68,35 +69,28 @@ export default function MeditationTimer() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainRef = useRef<GainNode | null>(null);
+  const audioInitialized = useRef(false);
 
-  useEffect(() => {
-    // Web Audio API logic must run on the client
-    if (typeof window !== 'undefined' && !audioContextRef.current) {
-        const audioContext = new window.AudioContext();
-        audioContextRef.current = audioContext;
+  const initializeAudio = () => {
+    if (audioInitialized.current || typeof window === 'undefined') return;
+    
+    const context = new window.AudioContext();
+    const oscillator = context.createOscillator();
+    const gainNode = context.createGain();
 
-        const oscillator = audioContext.createOscillator();
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(220, audioContext.currentTime); // A gentle A3 note
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(220, context.currentTime); // A gentle A3 note
+    gainNode.gain.setValueAtTime(0, context.currentTime); // Start silent
 
-        const gainNode = audioContext.createGain();
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime); // Start silent
+    oscillator.connect(gainNode);
+    gainNode.connect(context.destination);
+    oscillator.start();
 
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        oscillator.start();
-
-        oscillatorRef.current = oscillator;
-        gainRef.current = gainNode;
-    }
-
-    return () => {
-        // Clean up on unmount
-        if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-            audioContextRef.current.close();
-        }
-    };
-  }, []);
+    audioContextRef.current = context;
+    oscillatorRef.current = oscillator;
+    gainRef.current = gainNode;
+    audioInitialized.current = true;
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -104,26 +98,14 @@ export default function MeditationTimer() {
       interval = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
-      
-      // Start or resume audio
-      if (audioContextRef.current && gainRef.current) {
-        if (audioContextRef.current.state === 'suspended') {
-            audioContextRef.current.resume();
-        }
-        gainRef.current.gain.linearRampToValueAtTime(0.1, audioContextRef.current.currentTime + 0.5);
-      }
-
-    } else {
-       // Pause audio
+    } else if (timeLeft === 0 && isActive) {
+      setIsActive(false);
+      toast({
+        title: "Meditation Complete!",
+        description: "You've successfully completed your 2-minute meditation.",
+      });
       if (gainRef.current && audioContextRef.current) {
         gainRef.current.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + 0.5);
-      }
-      if (timeLeft === 0 && isActive) {
-        setIsActive(false);
-        toast({
-          title: "Meditation Complete!",
-          description: "You've successfully completed your 2-minute meditation.",
-        });
       }
     }
     return () => {
@@ -131,15 +113,49 @@ export default function MeditationTimer() {
     };
   }, [isActive, timeLeft, toast]);
 
+  useEffect(() => {
+    // Cleanup audio context on component unmount
+    return () => {
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close();
+      }
+    };
+  }, []);
+
   const toggleTimer = () => {
-    if (timeLeft > 0) {
-      setIsActive(!isActive);
+    if (timeLeft <= 0) return;
+
+    if (!audioInitialized.current) {
+      initializeAudio();
     }
+    
+    const audioContext = audioContextRef.current;
+    const gainNode = gainRef.current;
+
+    if (audioContext && gainNode) {
+      if (!isActive) {
+        // User is starting the timer
+        if (audioContext.state === 'suspended') {
+          audioContext.resume();
+        }
+        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.5);
+      } else {
+        // User is pausing the timer
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+      }
+    }
+    
+    setIsActive(!isActive);
   };
 
   const resetTimer = () => {
     setIsActive(false);
     setTimeLeft(MEDITATION_DURATION);
+    const audioContext = audioContextRef.current;
+    const gainNode = gainRef.current;
+    if (audioContext && gainNode) {
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.1);
+    }
   };
 
   const progressPercentage = (timeLeft / MEDITATION_DURATION) * 100;
