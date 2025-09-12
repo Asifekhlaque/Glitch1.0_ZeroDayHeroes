@@ -7,13 +7,9 @@ import { Activity, ArrowLeft, Menu } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function AppHeader() {
-  const { isMobile, setOpenMobile } = useSidebar();
+  const { setOpenMobile } = useSidebar();
   const router = useRouter();
   const pathname = usePathname();
-
-  if (!isMobile) {
-    return null;
-  }
 
   const showBackButton = pathname !== '/dashboard';
 
