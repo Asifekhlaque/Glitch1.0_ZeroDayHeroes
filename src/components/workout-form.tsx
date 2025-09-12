@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { getWorkoutPlan } from "@/lib/actions";
+import ReactMarkdown from "react-markdown";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -257,8 +258,8 @@ export default function WorkoutForm() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-stone dark:prose-invert max-w-none whitespace-pre-wrap">
-                {workoutPlan}
+              <div className="prose prose-stone dark:prose-invert max-w-none">
+                <ReactMarkdown>{workoutPlan}</ReactMarkdown>
               </div>
             </CardContent>
           </Card>

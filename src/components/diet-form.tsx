@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { getDietPlan } from "@/lib/actions";
+import ReactMarkdown from "react-markdown";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -278,8 +279,8 @@ export default function DietForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="prose prose-stone dark:prose-invert max-w-none whitespace-pre-wrap">
-              {dietPlan}
+            <div className="prose prose-stone dark:prose-invert max-w-none">
+              <ReactMarkdown>{dietPlan}</ReactMarkdown>
             </div>
           </CardContent>
         </Card>
