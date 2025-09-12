@@ -108,7 +108,7 @@ export default function SleepSchedule() {
     if (showBedtimeToast) {
       toast({
         title: "🌙 Time for bed!",
-        description: `It's ${bedtime}. Time to wind down and get some rest.`,
+        description: `It's ${new Date(`1970-01-01T${bedtime}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}. Time to wind down and get some rest.`,
         duration: 10000,
       });
       setShowBedtimeToast(false);
@@ -136,6 +136,10 @@ export default function SleepSchedule() {
   }, [showCanceledToast, toast]);
 
   const scheduleNotification = (bedtimeDate: Date) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     const now = new Date();
     const timeUntilBedtime = bedtimeDate.getTime() - now.getTime();
     
@@ -155,12 +159,6 @@ export default function SleepSchedule() {
 
 
   const handleSetBedtime = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    
-    setScheduledTime(bedtime);
-
     const now = new Date();
     const [hours, minutes] = bedtime.split(":").map(Number);
     
@@ -170,6 +168,8 @@ export default function SleepSchedule() {
     if (bedtimeDate < now) {
       bedtimeDate.setDate(bedtimeDate.getDate() + 1);
     }
+    
+    setScheduledTime(bedtime);
 
     try {
       localStorage.setItem("sleepSchedule", bedtimeDate.toISOString());
@@ -186,13 +186,13 @@ export default function SleepSchedule() {
   const handleCancel = () => {
     if(timeoutRef.current) {
       clearTimeout(timeoutRef.current);
-      setScheduledTime(null);
-      setShowCanceledToast(true);
-      try {
-        localStorage.removeItem("sleepSchedule");
-      } catch (error) {
-        console.error("Failed to remove from localStorage", error);
-      }
+    }
+    setScheduledTime(null);
+    setShowCanceledToast(true);
+    try {
+      localStorage.removeItem("sleepSchedule");
+    } catch (error) {
+      console.error("Failed to remove from localStorage", error);
     }
   };
 
