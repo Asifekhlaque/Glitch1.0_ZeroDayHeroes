@@ -13,7 +13,11 @@ import {
   Flower2,
   BedDouble,
   ArrowRight,
+  HeartPulse,
+  BrainCircuit,
+  Vegan,
 } from 'lucide-react';
+import PageHeader from '@/components/page-header';
 
 const features = [
   {
@@ -53,26 +57,47 @@ const features = [
   },
 ];
 
+const awarenessTips = [
+  {
+    icon: <HeartPulse className="w-6 h-6 text-red-500" />,
+    title: 'Mindful Eating',
+    description:
+      'Pay attention to your food. Eating slowly and without distraction helps you recognize hunger cues and enjoy your meals more.',
+  },
+  {
+    icon: <BrainCircuit className="w-6 h-6 text-blue-500" />,
+    title: 'Digital Detox',
+    description:
+      'Take regular breaks from screens. Unplugging for even a short period can reduce eye strain, improve sleep, and boost mental clarity.',
+  },
+  {
+    icon: <Vegan className="w-6 h-6 text-green-500" />,
+    title: 'Power of Plants',
+    description:
+      'Incorporate more plant-based foods into your diet. They are rich in vitamins, minerals, and fiber that fuel your body and mind.',
+  },
+];
+
 export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-headline text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-          Welcome to LifeBoost
-        </h1>
-        <p className="text-muted-foreground mt-2 text-lg">
-          Your personalized companion for a healthier and balanced lifestyle.
-        </p>
-      </div>
+      <PageHeader
+        title="Welcome to LifeBoost"
+        subtitle="Your personalized companion for a healthier and balanced lifestyle."
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {features.map((feature) => (
           <Link href={feature.href} key={feature.title} className="group">
-            <Card className={`h-full transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 border-2 border-transparent ${feature.color}`}>
+            <Card
+              className={`h-full transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 border-2 border-transparent ${feature.color}`}
+            >
               <CardHeader className="flex flex-row items-center gap-4">
                 {feature.icon}
                 <div className="flex-1">
-                  <CardTitle className="font-headline text-2xl">{feature.title}</CardTitle>
+                  <CardTitle className="font-headline text-2xl">
+                    {feature.title}
+                  </CardTitle>
                 </div>
                 <ArrowRight className="w-5 h-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1" />
               </CardHeader>
@@ -82,6 +107,27 @@ export default function DashboardPage() {
             </Card>
           </Link>
         ))}
+      </div>
+
+      <div>
+        <h2 className="font-headline text-3xl font-bold tracking-tight text-foreground mb-4">
+          Lifestyle Awareness
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {awarenessTips.map((tip) => (
+            <Card key={tip.title} className="bg-card">
+              <CardHeader className="flex flex-row items-start gap-4">
+                {tip.icon}
+                <div className='flex-1'>
+                  <CardTitle className="text-xl font-semibold">{tip.title}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">{tip.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
