@@ -27,6 +27,25 @@ export default function SleepSchedule() {
   const [showCanceledToast, setShowCanceledToast] = useState(false);
   const [scheduledToastTime, setScheduledToastTime] = useState('');
 
+  useEffect(() => {
+    try {
+      const savedTime = localStorage.getItem("sleepSchedule");
+      if (savedTime) {
+        const bedtimeDate = new Date(savedTime);
+        if (bedtimeDate > new Date()) {
+          const time = bedtimeDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+          setBedtime(time);
+          setScheduledTime(time);
+          scheduleNotification(bedtimeDate);
+        } else {
+          localStorage.removeItem("sleepSchedule");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to read from localStorage", error);
+    }
+  }, []);
+
   const initializeAudio = () => {
     if (audioInitialized.current || typeof window === 'undefined') return;
     
@@ -44,27 +63,34 @@ export default function SleepSchedule() {
       audioContext.resume();
     }
 
-    const playNote = (frequency: number, startTime: number) => {
+    const playNote = (frequency: number, startTime: number, duration: number) => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
       oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + startTime);
       
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + startTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 5);
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime + startTime);
+      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + startTime + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + startTime + duration);
       
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
       
       oscillator.start(audioContext.currentTime + startTime);
-      oscillator.stop(audioContext.currentTime + 5);
+      oscillator.stop(audioContext.currentTime + startTime + duration);
     };
 
-    playNote(523.25, 0); // C5
-    playNote(659.25, 0.5); // E5
-    playNote(783.99, 1); // G5
+    const noteDuration = 0.4;
+    const totalDuration = 5;
+    let time = 0;
+    
+    while(time < totalDuration) {
+      playNote(523.25, time, noteDuration); // C5
+      playNote(659.25, time, noteDuration); // E5
+      playNote(783.99, time + 0.2, noteDuration); // G5
+      time += 1.5;
+    }
   };
   
   useEffect(() => {
@@ -109,6 +135,24 @@ export default function SleepSchedule() {
     }
   }, [showCanceledToast, toast]);
 
+  const scheduleNotification = (bedtimeDate: Date) => {
+    const now = new Date();
+    const timeUntilBedtime = bedtimeDate.getTime() - now.getTime();
+    
+    if (timeUntilBedtime > 0) {
+      timeoutRef.current = setTimeout(() => {
+        playNotificationSound();
+        setShowBedtimeToast(true);
+        setScheduledTime(null);
+        try {
+            localStorage.removeItem("sleepSchedule");
+        } catch (error) {
+            console.error("Failed to remove from localStorage", error);
+        }
+      }, timeUntilBedtime);
+    }
+  };
+
 
   const handleSetBedtime = () => {
     if (timeoutRef.current) {
@@ -127,16 +171,16 @@ export default function SleepSchedule() {
       bedtimeDate.setDate(bedtimeDate.getDate() + 1);
     }
 
-    const timeUntilBedtime = bedtimeDate.getTime() - now.getTime();
+    try {
+      localStorage.setItem("sleepSchedule", bedtimeDate.toISOString());
+    } catch (error) {
+      console.error("Failed to write to localStorage", error);
+    }
     
     setScheduledToastTime(bedtimeDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
     setShowScheduledToast(true);
     
-    timeoutRef.current = setTimeout(() => {
-      playNotificationSound();
-      setShowBedtimeToast(true);
-      setScheduledTime(null);
-    }, timeUntilBedtime);
+    scheduleNotification(bedtimeDate);
   };
   
   const handleCancel = () => {
@@ -144,6 +188,11 @@ export default function SleepSchedule() {
       clearTimeout(timeoutRef.current);
       setScheduledTime(null);
       setShowCanceledToast(true);
+      try {
+        localStorage.removeItem("sleepSchedule");
+      } catch (error) {
+        console.error("Failed to remove from localStorage", error);
+      }
     }
   };
 
@@ -163,6 +212,7 @@ export default function SleepSchedule() {
             value={bedtime}
             onChange={(e) => setBedtime(e.target.value)}
             className="text-lg"
+            disabled={!!scheduledTime}
           />
         </div>
         {scheduledTime && (

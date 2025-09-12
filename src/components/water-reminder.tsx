@@ -75,6 +75,24 @@ export default function WaterReminder() {
   const [showStartedToast, setShowStartedToast] = useState(false);
   const [showStoppedToast, setShowStoppedToast] = useState(false);
 
+  useEffect(() => {
+    try {
+      const savedState = localStorage.getItem("hydrationReminder");
+      if (savedState) {
+        const { interval, endTime, active } = JSON.parse(savedState);
+        if (active && endTime && Date.now() < endTime) {
+          setIntervalMinutes(interval);
+          setIsActive(true);
+          setTimeLeft(Math.round((endTime - Date.now()) / 1000));
+        } else {
+          localStorage.removeItem("hydrationReminder");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to read from localStorage", error);
+    }
+  }, []);
+
   const initializeAudio = () => {
     if (audioInitialized.current || typeof window === 'undefined') return;
     
@@ -92,27 +110,34 @@ export default function WaterReminder() {
       audioContext.resume();
     }
     
-    const playNote = (frequency: number, startTime: number) => {
+    const playNote = (frequency: number, startTime: number, duration: number) => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
       oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + startTime);
       
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + startTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 5);
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime + startTime);
+      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + startTime + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + startTime + duration);
       
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
       
       oscillator.start(audioContext.currentTime + startTime);
-      oscillator.stop(audioContext.currentTime + 5);
+      oscillator.stop(audioContext.currentTime + startTime + duration);
     };
 
-    playNote(523.25, 0); // C5
-    playNote(659.25, 0.5); // E5
-    playNote(783.99, 1); // G5
+    const noteDuration = 0.4;
+    const totalDuration = 5;
+    let time = 0;
+    
+    while(time < totalDuration) {
+      playNote(523.25, time, noteDuration); // C5
+      playNote(659.25, time, noteDuration); // E5
+      playNote(783.99, time + 0.2, noteDuration); // G5
+      time += 1.5;
+    }
   };
   
   useEffect(() => {
@@ -132,6 +157,16 @@ export default function WaterReminder() {
           if (prev <= 1) {
             playNotificationSound();
             setShowHydrationToast(true);
+            const newEndTime = Date.now() + intervalMinutes * 60 * 1000;
+            try {
+              localStorage.setItem("hydrationReminder", JSON.stringify({
+                interval: intervalMinutes,
+                endTime: newEndTime,
+                active: true,
+              }));
+            } catch (error) {
+              console.error("Failed to write to localStorage", error);
+            }
             return intervalMinutes * 60; // Reset timer
           }
           return prev - 1;
@@ -181,7 +216,20 @@ export default function WaterReminder() {
   }, [intervalMinutes, isActive]);
 
   const handleStart = () => {
-    setTimeLeft(intervalMinutes * 60);
+    const duration = intervalMinutes * 60;
+    const endTime = Date.now() + duration * 1000;
+    
+    try {
+      localStorage.setItem("hydrationReminder", JSON.stringify({
+        interval: intervalMinutes,
+        endTime: endTime,
+        active: true,
+      }));
+    } catch (error) {
+        console.error("Failed to write to localStorage", error);
+    }
+
+    setTimeLeft(duration);
     setIsActive(true);
     setShowStartedToast(true);
   };
@@ -189,6 +237,11 @@ export default function WaterReminder() {
   const handleStop = () => {
     setIsActive(false);
     setShowStoppedToast(true);
+    try {
+      localStorage.removeItem("hydrationReminder");
+    } catch (error) {
+        console.error("Failed to remove from localStorage", error);
+    }
   };
 
   const progress = (timeLeft / (intervalMinutes * 60)) * 100;
