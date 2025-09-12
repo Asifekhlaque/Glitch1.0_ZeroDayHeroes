@@ -8,9 +8,9 @@
     },
     {
       "id": "squats",
-      "description": "A person doing squats with a barbell",
-      "imageUrl": "https://images.unsplash.com/photo-1599058917212-d750089bc07e?q=80&w=600&h=400&fit=crop",
-      "imageHint": "man barbell squat"
+      "description": "A person doing squats",
+      "imageUrl": "https://img.freepik.com/free-photo/strong-tattooed-white-unlabeled-tank-t-shirt-male-athlete-shows-calisthenic-moves-squat-hold-plank-exercise_346278-1602.jpg?semt=ais_hybrid&w=740&q=80",
+      "imageHint": "man squat"
     },
     {
       "id": "plank",
