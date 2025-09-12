@@ -27,6 +27,28 @@ export default function SleepSchedule() {
   const [showCanceledToast, setShowCanceledToast] = useState(false);
   const [scheduledToastTime, setScheduledToastTime] = useState('');
 
+  const scheduleNotification = (bedtimeDate: Date) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    const now = new Date();
+    const timeUntilBedtime = bedtimeDate.getTime() - now.getTime();
+    
+    if (timeUntilBedtime > 0) {
+      timeoutRef.current = setTimeout(() => {
+        playNotificationSound();
+        setShowBedtimeToast(true);
+        setScheduledTime(null);
+        try {
+            localStorage.removeItem("sleepSchedule");
+        } catch (error) {
+            console.error("Failed to remove from localStorage", error);
+        }
+      }, timeUntilBedtime);
+    }
+  };
+
   useEffect(() => {
     try {
       const savedTime = localStorage.getItem("sleepSchedule");
@@ -134,29 +156,6 @@ export default function SleepSchedule() {
       setShowCanceledToast(false);
     }
   }, [showCanceledToast, toast]);
-
-  const scheduleNotification = (bedtimeDate: Date) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    const now = new Date();
-    const timeUntilBedtime = bedtimeDate.getTime() - now.getTime();
-    
-    if (timeUntilBedtime > 0) {
-      timeoutRef.current = setTimeout(() => {
-        playNotificationSound();
-        setShowBedtimeToast(true);
-        setScheduledTime(null);
-        try {
-            localStorage.removeItem("sleepSchedule");
-        } catch (error) {
-            console.error("Failed to remove from localStorage", error);
-        }
-      }, timeUntilBedtime);
-    }
-  };
-
 
   const handleSetBedtime = () => {
     const now = new Date();
