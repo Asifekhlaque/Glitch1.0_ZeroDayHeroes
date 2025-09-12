@@ -1,3 +1,4 @@
+
 import PageHeader from "@/components/page-header";
 import DietForm from "@/components/diet-form";
 import {
@@ -9,6 +10,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Utensils } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 const samplePlans = {
   gain: {
@@ -88,13 +90,13 @@ export default function DietPage() {
                     <TabsTrigger value="veg">Vegetarian</TabsTrigger>
                   </TabsList>
                   <TabsContent value="non-veg">
-                    <div className="prose prose-stone dark:prose-invert max-w-none whitespace-pre-wrap p-4 rounded-md bg-muted/50">
-                        {samplePlans.gain.nonVeg}
+                    <div className="prose prose-stone dark:prose-invert max-w-none p-4 rounded-md bg-muted/50">
+                      <ReactMarkdown>{samplePlans.gain.nonVeg}</ReactMarkdown>
                     </div>
                   </TabsContent>
                   <TabsContent value="veg">
-                    <div className="prose prose-stone dark:prose-invert max-w-none whitespace-pre-wrap p-4 rounded-md bg-muted/50">
-                        {samplePlans.gain.veg}
+                    <div className="prose prose-stone dark:prose-invert max-w-none p-4 rounded-md bg-muted/50">
+                      <ReactMarkdown>{samplePlans.gain.veg}</ReactMarkdown>
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -109,13 +111,13 @@ export default function DietPage() {
                     <TabsTrigger value="veg">Vegetarian</TabsTrigger>
                   </TabsList>
                   <TabsContent value="non-veg">
-                    <div className="prose prose-stone dark:prose-invert max-w-none whitespace-pre-wrap p-4 rounded-md bg-muted/50">
-                        {samplePlans.lose.nonVeg}
+                    <div className="prose prose-stone dark:prose-invert max-w-none p-4 rounded-md bg-muted/50">
+                      <ReactMarkdown>{samplePlans.lose.nonVeg}</ReactMarkdown>
                     </div>
                   </TabsContent>
                   <TabsContent value="veg">
-                    <div className="prose prose-stone dark:prose-invert max-w-none whitespace-pre-wrap p-4 rounded-md bg-muted/50">
-                        {samplePlans.lose.veg}
+                    <div className="prose prose-stone dark:prose-invert max-w-none p-4 rounded-md bg-muted/50">
+                      <ReactMarkdown>{samplePlans.lose.veg}</ReactMarkdown>
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -130,13 +132,13 @@ export default function DietPage() {
                     <TabsTrigger value="veg">Vegetarian</TabsTrigger>
                   </TabsList>
                   <TabsContent value="non-veg">
-                    <div className="prose prose-stone dark:prose-invert max-w-none whitespace-pre-wrap p-4 rounded-md bg-muted/50">
-                        {samplePlans.maintain.nonVeg}
+                    <div className="prose prose-stone dark:prose-invert max-w-none p-4 rounded-md bg-muted/50">
+                      <ReactMarkdown>{samplePlans.maintain.nonVeg}</ReactMarkdown>
                     </div>
                   </TabsContent>
-                  <TabsContent value="veg">
-                    <div className="prose prose-stone dark:prose-invert max-w-none whitespace-pre-wrap p-4 rounded-md bg-muted/50">
-                        {samplePlans.maintain.veg}
+                  <TabsContent value>
+                    <div className="prose prose-stone dark:prose-invert max-w-none p-4 rounded-md bg-muted/50">
+                      <ReactMarkdown>{samplePlans.maintain.veg}</ReactMarkdown>
                     </div>
                   </TabsContent>
                 </Tabs>
