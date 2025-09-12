@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
 import { Play, Pause, RotateCcw, Music2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -56,6 +63,7 @@ const CircularProgress = ({ progress }: { progress: number }) => {
 export default function MeditationTimer() {
   const [timeLeft, setTimeLeft] = useState(MEDITATION_DURATION);
   const [isActive, setIsActive] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -64,12 +72,20 @@ export default function MeditationTimer() {
       interval = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
-    } else if (timeLeft === 0 && isActive) {
-      setIsActive(false);
-      toast({
-        title: "Meditation Complete!",
-        description: "You've successfully completed your 2-minute meditation.",
-      });
+      audioRef.current?.play();
+    } else {
+      audioRef.current?.pause();
+      if (timeLeft === 0 && isActive) {
+        setIsActive(false);
+        toast({
+          title: "Meditation Complete!",
+          description: "You've successfully completed your 2-minute meditation.",
+        });
+        // Reset audio to the beginning
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+        }
+      }
     }
     return () => {
       if (interval) clearInterval(interval);
@@ -85,6 +101,10 @@ export default function MeditationTimer() {
   const resetTimer = () => {
     setIsActive(false);
     setTimeLeft(MEDITATION_DURATION);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
   };
 
   const progressPercentage = (timeLeft / MEDITATION_DURATION) * 100;
@@ -99,9 +119,12 @@ export default function MeditationTimer() {
       <CardContent className="flex flex-col items-center justify-center gap-6">
         <CircularProgress progress={progressPercentage} />
         <div className="flex items-center gap-2 text-muted-foreground p-2 rounded-lg bg-muted">
-           <Music2 className="w-5 h-5"/> 
-           <span>Calm background music is playing...</span>
+          <Music2 className="w-5 h-5" />
+          <span>
+            {isActive ? "Calm music is playing..." : "Music is paused"}
+          </span>
         </div>
+        <audio ref={audioRef} src="/meditation-music.mp3" loop />
       </CardContent>
       <CardFooter className="flex justify-center gap-4">
         <Button onClick={toggleTimer} size="lg" disabled={isFinished}>
