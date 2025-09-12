@@ -157,7 +157,12 @@ export default function MeditationTimer() {
   }, []);
 
   const toggleTimer = () => {
-    if (timeLeft <= 0) return;
+    const isFinished = timeLeft <= 0;
+
+    if (isFinished) {
+      resetTimer();
+      return;
+    }
 
     if (!audioInitialized.current) {
       initializeAudio();
@@ -196,6 +201,27 @@ export default function MeditationTimer() {
   const progressPercentage = ((MEDITATION_DURATION - timeLeft) / MEDITATION_DURATION) * 100;
   const isFinished = timeLeft === 0;
 
+  const getButtonContent = () => {
+      if (isFinished) {
+          return {
+              icon: <RotateCcw className="mr-2" />,
+              text: "Start Over"
+          };
+      }
+      if (isActive) {
+          return {
+              icon: <Pause className="mr-2" />,
+              text: "Pause"
+          };
+      }
+      return {
+          icon: <Play className="mr-2" />,
+          text: "Start"
+      };
+  }
+
+  const { icon, text } = getButtonContent();
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
@@ -212,17 +238,9 @@ export default function MeditationTimer() {
         </div>
       </CardContent>
       <CardFooter className="flex justify-center gap-4">
-        <Button onClick={toggleTimer} size="lg" disabled={isFinished}>
-          {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
-          {isActive ? "Pause" : isFinished ? "Finished" : "Start"}
-        </Button>
-        <Button
-          onClick={resetTimer}
-          variant="outline"
-          size="lg"
-        >
-          <RotateCcw className="mr-2" />
-          Reset
+        <Button onClick={toggleTimer} size="lg">
+          {icon}
+          {text}
         </Button>
       </CardFooter>
     </Card>
