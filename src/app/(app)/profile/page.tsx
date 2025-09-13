@@ -1,4 +1,5 @@
 
+
 'use client';
 import { useState, useEffect } from 'react';
 import {
@@ -10,9 +11,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import PageHeader from '@/components/page-header';
-import { Medal, Droplet, Flower2, Award, Dumbbell, Share2 } from 'lucide-react';
+import { Medal, Droplet, Flower2, Award, Dumbbell } from 'lucide-react';
 import ClientOnly from '@/components/client-only';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
 const medalTiers = {
@@ -88,162 +88,102 @@ export default function ProfilePage() {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="flex flex-col">
-                <CardHeader>
-                    <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
-                        <Flower2 className='w-6 h-6 text-primary' />
-                        Meditation Mastery
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center gap-4 text-center flex-1">
-                    <Medal className={`w-24 h-24 ${meditationMedal.color}`} />
-                    <p className='text-2xl font-bold'>{meditationMedal.name}</p>
-                    <p className='text-muted-foreground'>
-                        {meditationCompletions} sessions completed
-                    </p>
-                </CardContent>
-                <CardFooter className='justify-center'>
-                    <Button 
-                        variant="outline"
-                        disabled={meditationMedal.level === 0}
-                        onClick={async () => {
-                            const shareData = {
-                                title: 'My Meditation Achievement!',
-                                text: `I've unlocked the ${meditationMedal.name} medal for Meditation Mastery in LifeBoost with ${meditationCompletions} sessions completed!`,
-                                url: window.location.href,
-                            };
-                            if (navigator.share) {
-                                try {
-                                    await navigator.share(shareData);
-                                } catch (error) {
-                                    const errorAny = error as any;
-                                    if (errorAny.name !== 'AbortError') {
-                                        console.error("Error sharing:", error);
-                                        toast({
-                                            variant: "destructive",
-                                            title: "Sharing Failed",
-                                            description: "Something went wrong while trying to share."
-                                        });
-                                    }
-                                }
-                            } else {
-                                toast({
-                                    variant: "destructive",
-                                    title: "Sharing Not Supported",
-                                    description: "Your browser does not support the Web Share API."
-                                });
-                            }
-                        }}
-                    >
-                        <Share2 className='mr-2' />
-                        Share
-                    </Button>
-                </CardFooter>
-            </Card>
-            <Card className="flex flex-col">
-                <CardHeader>
-                    <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
-                        <Droplet className='w-6 h-6 text-primary' />
-                        Hydration Hero
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center gap-4 text-center flex-1">
-                    <Medal className={`w-24 h-24 ${hydrationMedal.color}`} />
-                    <p className='text-2xl font-bold'>{hydrationMedal.name}</p>
-                     <p className='text-muted-foreground'>
-                        {hydrationStreak} day streak
-                    </p>
-                </CardContent>
-                <CardFooter className='justify-center'>
-                    <Button 
-                        variant="outline"
-                        disabled={hydrationMedal.level === 0}
-                        onClick={async () => {
-                            const shareData = {
-                                title: 'My Hydration Achievement!',
-                                text: `I've earned the ${hydrationMedal.name} medal for being a Hydration Hero in LifeBoost with a ${hydrationStreak}-day streak!`,
-                                url: window.location.href,
-                            };
-                            if (navigator.share) {
-                                try {
-                                    await navigator.share(shareData);
-                                } catch (error) {
-                                    const errorAny = error as any;
-                                    if (errorAny.name !== 'AbortError') {
-                                        console.error("Error sharing:", error);
-                                        toast({
-                                            variant: "destructive",
-                                            title: "Sharing Failed",
-                                            description: "Something went wrong while trying to share."
-                                        });
-                                    }
-                                }
-                            } else {
-                                toast({
-                                    variant: "destructive",
-                                    title: "Sharing Not Supported",
-                                    description: "Your browser does not support the Web Share API."
-                                });
-                            }
-                        }}
-                    >
-                        <Share2 className='mr-2' />
-                        Share
-                    </Button>
-                </CardFooter>
-            </Card>
-            <Card className="flex flex-col">
-                <CardHeader>
-                    <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
-                        <Dumbbell className='w-6 h-6 text-primary' />
-                        Workout Warrior
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center gap-4 text-center flex-1">
-                    <Medal className={`w-24 h-24 ${workoutMedal.color}`} />
-                    <p className='text-2xl font-bold'>{workoutMedal.name}</p>
-                     <p className='text-muted-foreground'>
-                        {workoutCompletions} workouts completed
-                    </p>
-                </CardContent>
-                <CardFooter className='justify-center'>
-                     <Button 
-                        variant="outline"
-                        disabled={workoutMedal.level === 0}
-                        onClick={async () => {
-                            const shareData = {
-                                title: 'My Workout Achievement!',
-                                text: `I'm a Workout Warrior in LifeBoost! I've crushed ${workoutCompletions} workouts and earned the ${workoutMedal.name} medal.`,
-                                url: window.location.href,
-                            };
-                            if (navigator.share) {
-                                try {
-                                    await navigator.share(shareData);
-                                } catch (error) {
-                                    const errorAny = error as any;
-                                    if (errorAny.name !== 'AbortError') {
-                                        console.error("Error sharing:", error);
-                                        toast({
-                                            variant: "destructive",
-                                            title: "Sharing Failed",
-                                            description: "Something went wrong while trying to share."
-                                        });
-                                    }
-                                }
-                            } else {
-                                toast({
-                                    variant: "destructive",
-                                    title: "Sharing Not Supported",
-                                    description: "Your browser does not support the Web Share API."
-                                });
-                            }
-                        }}
-                    >
-                        <Share2 className='mr-2' />
-                        Share
-                    </Button>
-                </CardFooter>
-            </Card>
+            <button
+                className="text-left w-full disabled:opacity-50 disabled:cursor-not-allowed group"
+                disabled={meditationMedal.level === 0}
+                onClick={() => {
+                    toast({
+                        title: `🏅 ${meditationMedal.name} Medal in Meditation!`,
+                        description: `You've unlocked the ${meditationMedal.name} medal by completing ${meditationCompletions} meditation session${meditationCompletions > 1 ? 's' : ''}. Amazing work!`,
+                    });
+                }}
+                aria-label={`View details for ${meditationMedal.name} Meditation medal`}
+            >
+                <Card className="flex flex-col h-full transition-shadow group-hover:shadow-lg">
+                    <CardHeader>
+                        <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
+                            <Flower2 className='w-6 h-6 text-primary' />
+                            Meditation Mastery
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center gap-4 text-center flex-1">
+                        <Medal className={`w-24 h-24 ${meditationMedal.color}`} />
+                        <p className='text-2xl font-bold'>{meditationMedal.name}</p>
+                        <p className='text-muted-foreground'>
+                            {meditationCompletions} sessions completed
+                        </p>
+                    </CardContent>
+                    <CardFooter className='justify-center'>
+                        <p className="text-sm text-muted-foreground">
+                            {meditationMedal.level > 0 ? 'Click to see details' : 'Complete 1 session to earn a medal'}
+                        </p>
+                    </CardFooter>
+                </Card>
+            </button>
+            <button
+                className="text-left w-full disabled:opacity-50 disabled:cursor-not-allowed group"
+                disabled={hydrationMedal.level === 0}
+                onClick={() => {
+                    toast({
+                        title: `🏅 ${hydrationMedal.name} Medal for Hydration!`,
+                        description: `You've earned the ${hydrationMedal.name} medal with a ${hydrationStreak}-day hydration streak. Keep it up!`,
+                    });
+                }}
+                aria-label={`View details for ${hydrationMedal.name} Hydration medal`}
+            >
+                <Card className="flex flex-col h-full transition-shadow group-hover:shadow-lg">
+                    <CardHeader>
+                        <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
+                            <Droplet className='w-6 h-6 text-primary' />
+                            Hydration Hero
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center gap-4 text-center flex-1">
+                        <Medal className={`w-24 h-24 ${hydrationMedal.color}`} />
+                        <p className='text-2xl font-bold'>{hydrationMedal.name}</p>
+                        <p className='text-muted-foreground'>
+                            {hydrationStreak} day streak
+                        </p>
+                    </CardContent>
+                    <CardFooter className='justify-center'>
+                       <p className="text-sm text-muted-foreground">
+                           {hydrationMedal.level > 0 ? 'Click to see details' : 'Reach your goal 1 day to earn a medal'}
+                        </p>
+                    </CardFooter>
+                </Card>
+            </button>
+            <button
+                className="text-left w-full disabled:opacity-50 disabled:cursor-not-allowed group"
+                disabled={workoutMedal.level === 0}
+                onClick={() => {
+                    toast({
+                        title: `🏅 ${workoutMedal.name} Medal for Workouts!`,
+                        description: `You're a Workout Warrior with the ${workoutMedal.name} medal, having crushed ${workoutCompletions} workout${workoutCompletions > 1 ? 's' : ''}. Incredible!`,
+                    });
+                }}
+                aria-label={`View details for ${workoutMedal.name} Workout medal`}
+            >
+                <Card className="flex flex-col h-full transition-shadow group-hover:shadow-lg">
+                    <CardHeader>
+                        <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
+                            <Dumbbell className='w-6 h-6 text-primary' />
+                            Workout Warrior
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center gap-4 text-center flex-1">
+                        <Medal className={`w-24 h-24 ${workoutMedal.color}`} />
+                        <p className='text-2xl font-bold'>{workoutMedal.name}</p>
+                        <p className='text-muted-foreground'>
+                            {workoutCompletions} workouts completed
+                        </p>
+                    </CardContent>
+                    <CardFooter className='justify-center'>
+                         <p className="text-sm text-muted-foreground">
+                           {workoutMedal.level > 0 ? 'Click to see details' : 'Complete 1 workout to earn a medal'}
+                        </p>
+                    </CardFooter>
+                </Card>
+            </button>
         </div>
 
         <Card>
@@ -307,3 +247,4 @@ export default function ProfilePage() {
   );
 
     
+
