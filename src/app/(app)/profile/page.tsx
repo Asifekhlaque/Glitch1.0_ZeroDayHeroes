@@ -79,14 +79,15 @@ export default function ProfilePage() {
     const hydrationMedal = getMedalForStreak(hydrationStreak);
     const workoutMedal = getMedalForCompletions(workoutCompletions);
 
-    const handleShare = (title: string, text: string) => {
+    const handleShare = async (title: string, text: string) => {
         if (navigator.share) {
-            navigator.share({
-                title,
-                text,
-                url: window.location.href,
-            })
-            .catch((error) => {
+            try {
+                await navigator.share({
+                    title,
+                    text,
+                    url: window.location.href,
+                });
+            } catch (error: any) {
                  if (error.name !== 'AbortError') {
                     console.error("Error sharing:", error);
                     toast({
@@ -95,7 +96,7 @@ export default function ProfilePage() {
                         description: "Something went wrong while trying to share."
                     });
                 }
-            });
+            }
         } else {
             toast({
                 variant: "destructive",
