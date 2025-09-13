@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import PageHeader from '@/components/page-header';
-import { Medal, Droplet, Flower2, Award } from 'lucide-react';
+import { Medal, Droplet, Flower2, Award, Dumbbell } from 'lucide-react';
 import ClientOnly from '@/components/client-only';
 
 const medalTiers = {
@@ -51,6 +51,7 @@ export default function ProfilePage() {
     const [userName, setUserName] = useState('User');
     const [meditationCompletions, setMeditationCompletions] = useState(0);
     const [hydrationStreak, setHydrationStreak] = useState(0);
+    const [workoutCompletions, setWorkoutCompletions] = useState(0);
 
     useEffect(() => {
         try {
@@ -63,6 +64,7 @@ export default function ProfilePage() {
                 const parsedStats = JSON.parse(stats);
                 setMeditationCompletions(parsedStats.meditationCompletions || 0);
                 setHydrationStreak(parsedStats.hydrationStreak || 0);
+                setWorkoutCompletions(parsedStats.workoutCompletions || 0);
             }
         } catch (error) {
             console.error("Failed to load user data from localStorage", error);
@@ -71,6 +73,7 @@ export default function ProfilePage() {
 
     const meditationMedal = getMedalForCompletions(meditationCompletions);
     const hydrationMedal = getMedalForStreak(hydrationStreak);
+    const workoutMedal = getMedalForCompletions(workoutCompletions);
 
   return (
     <ClientOnly>
@@ -80,18 +83,15 @@ export default function ProfilePage() {
             subtitle="Here is a summary of your achievements and journey so far."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
                 <CardHeader>
                     <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
                         <Flower2 className='w-6 h-6 text-primary' />
                         Meditation Mastery
                     </CardTitle>
-                    <CardDescription>
-                        You get a new medal for each session you complete.
-                    </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center gap-4">
+                <CardContent className="flex flex-col items-center gap-4 text-center">
                     <Medal className={`w-24 h-24 ${meditationMedal.color}`} />
                     <p className='text-2xl font-bold'>{meditationMedal.name}</p>
                     <p className='text-muted-foreground'>
@@ -105,15 +105,27 @@ export default function ProfilePage() {
                         <Droplet className='w-6 h-6 text-primary' />
                         Hydration Hero
                     </CardTitle>
-                    <CardDescription>
-                        Medals are awarded for meeting your goal on consecutive days.
-                    </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center gap-4">
+                <CardContent className="flex flex-col items-center gap-4 text-center">
                     <Medal className={`w-24 h-24 ${hydrationMedal.color}`} />
                     <p className='text-2xl font-bold'>{hydrationMedal.name}</p>
                      <p className='text-muted-foreground'>
                         {hydrationStreak} day streak
+                    </p>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
+                        <Dumbbell className='w-6 h-6 text-primary' />
+                        Workout Warrior
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center gap-4 text-center">
+                    <Medal className={`w-24 h-24 ${workoutMedal.color}`} />
+                    <p className='text-2xl font-bold'>{workoutMedal.name}</p>
+                     <p className='text-muted-foreground'>
+                        {workoutCompletions} workouts completed
                     </p>
                 </CardContent>
             </Card>
@@ -129,7 +141,7 @@ export default function ProfilePage() {
                     Here's how you can earn medals and level up your wellness journey.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                     <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
                         <Flower2 className="w-5 h-5"/>
@@ -153,7 +165,21 @@ export default function ProfilePage() {
                         {medalGuide.map(medal => (
                          <li key={`hydration-${medal.level}`} className="flex items-center gap-2">
                             <Medal className={`w-5 h-5 ${medal.color}`} />
-                            <span><span className="font-bold">{medal.name}:</span> Reach your goal for {medal.level} day{medal.level > 1 ? 's' : ''} in a row</span>
+                            <span><span className="font-bold">{medal.name}:</span> Reach goal for {medal.level} day{medal.level > 1 ? 's' : ''} in a row</span>
+                        </li>
+                       ))}
+                    </ul>
+                </div>
+                <div>
+                    <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
+                        <Dumbbell className="w-5 h-5"/>
+                        Workout Warrior
+                    </h3>
+                    <ul className="space-y-2 text-muted-foreground">
+                       {medalGuide.map(medal => (
+                         <li key={`workout-${medal.level}`} className="flex items-center gap-2">
+                            <Medal className={`w-5 h-5 ${medal.color}`} />
+                            <span><span className="font-bold">{medal.name}:</span> Complete {medal.level} workout{medal.level > 1 ? 's' : ''}</span>
                         </li>
                        ))}
                     </ul>

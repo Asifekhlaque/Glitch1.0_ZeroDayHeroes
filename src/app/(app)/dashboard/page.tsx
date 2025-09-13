@@ -19,6 +19,7 @@ import {
   Code,
   BookOpenCheck,
   User,
+  Medal,
 } from 'lucide-react';
 import PageHeader from '@/components/page-header';
 
