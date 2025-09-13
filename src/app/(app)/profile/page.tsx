@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import PageHeader from '@/components/page-header';
-import { Medal, Droplet, Flower2 } from 'lucide-react';
+import { Medal, Droplet, Flower2, Award } from 'lucide-react';
 import ClientOnly from '@/components/client-only';
 
 const medalTiers = {
@@ -39,6 +39,13 @@ const getMedalForStreak = (streak: number) => {
     return medalTiers[0];
 }
 
+const medalGuide = [
+    { level: 1, name: 'Bronze', color: 'text-yellow-600' },
+    { level: 2, name: 'Silver', color: 'text-gray-400' },
+    { level: 3, name: 'Gold', color: 'text-yellow-400' },
+    { level: 4, name: 'Diamond', color: 'text-blue-400' },
+    { level: 5, name: 'Expert', color: 'text-purple-500' },
+];
 
 export default function ProfilePage() {
     const [userName, setUserName] = useState('User');
@@ -111,6 +118,49 @@ export default function ProfilePage() {
                 </CardContent>
             </Card>
         </div>
+
+        <Card>
+            <CardHeader>
+                <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
+                    <Award className='w-6 h-6 text-primary' />
+                    Medal Guidelines
+                </CardTitle>
+                <CardDescription>
+                    Here's how you can earn medals and level up your wellness journey.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
+                        <Flower2 className="w-5 h-5"/>
+                        Meditation Mastery
+                    </h3>
+                    <ul className="space-y-2 text-muted-foreground">
+                       {medalGuide.map(medal => (
+                         <li key={`meditation-${medal.level}`} className="flex items-center gap-2">
+                            <Medal className={`w-5 h-5 ${medal.color}`} />
+                            <span><span className="font-bold">{medal.name}:</span> Complete {medal.level} session{medal.level > 1 ? 's' : ''}</span>
+                        </li>
+                       ))}
+                    </ul>
+                </div>
+                 <div>
+                    <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
+                        <Droplet className="w-5 h-5"/>
+                        Hydration Hero
+                    </h3>
+                    <ul className="space-y-2 text-muted-foreground">
+                        {medalGuide.map(medal => (
+                         <li key={`hydration-${medal.level}`} className="flex items-center gap-2">
+                            <Medal className={`w-5 h-5 ${medal.color}`} />
+                            <span><span className="font-bold">{medal.name}:</span> Reach your goal for {medal.level} day{medal.level > 1 ? 's' : ''} in a row</span>
+                        </li>
+                       ))}
+                    </ul>
+                </div>
+            </CardContent>
+        </Card>
+
         </div>
     </ClientOnly>
   );
