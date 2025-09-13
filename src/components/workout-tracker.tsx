@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { format, startOfDay } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
@@ -81,12 +81,12 @@ const CircularProgress = ({ progress, timeLeft }: { progress: number, timeLeft: 
 export default function WorkoutTracker() {
   const [timeLeft, setTimeLeft] = useState(WORKOUT_DURATION);
   const [isActive, setIsActive] = useState(false);
-  const [exercises, setExercises] = useState(initialExercises);
+  const [exercises, setExercises] = useState(() => initialExercises.map(e => ({...e})));
   const [workoutCompletedToday, setWorkoutCompletedToday] = useState(false);
   const { toast } = useToast();
   const todayStr = format(startOfDay(new Date()), "yyyy-MM-dd");
 
-  const completeWorkout = () => {
+  const completeWorkout = useCallback(() => {
     if (workoutCompletedToday) return;
 
     try {
@@ -96,6 +96,7 @@ export default function WorkoutTracker() {
       const newCompletions = oldCompletions + 1;
 
       userStats.workoutCompletions = newCompletions;
+      userStats.lastWorkoutDate = todayStr;
       localStorage.setItem("userStats", JSON.stringify(userStats));
 
       const oldMedal = getMedalForCompletions(oldCompletions);
@@ -116,7 +117,7 @@ export default function WorkoutTracker() {
     } catch (error) {
       console.error("Failed to update workout stats", error);
     }
-  };
+  }, [workoutCompletedToday, todayStr, toast]);
 
   useEffect(() => {
     try {
@@ -124,6 +125,10 @@ export default function WorkoutTracker() {
         const stats = statsRaw ? JSON.parse(statsRaw) : {};
         if (stats.lastWorkoutDate === todayStr) {
             setWorkoutCompletedToday(true);
+            const savedExercises = localStorage.getItem('workoutExercises');
+            if (savedExercises) {
+                setExercises(JSON.parse(savedExercises));
+            }
         }
     } catch (error) {
         console.error("Failed to load workout completion status", error);
@@ -144,19 +149,44 @@ export default function WorkoutTracker() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, timeLeft]);
+  }, [isActive, timeLeft, completeWorkout]);
   
   useEffect(() => {
       const allDone = exercises.every(ex => ex.done);
       if (allDone) {
           completeWorkout();
       }
-  }, [exercises]);
+      try {
+        localStorage.setItem('workoutExercises', JSON.stringify(exercises));
+      } catch (error) {
+        console.error("Failed to save exercises to localStorage", error);
+      }
+  }, [exercises, completeWorkout]);
 
   const toggleTimer = () => setIsActive(!isActive);
+
   const resetTimer = () => {
     setIsActive(false);
     setTimeLeft(WORKOUT_DURATION);
+    setExercises(initialExercises.map(e => ({...e})));
+    if (workoutCompletedToday) {
+        try {
+            const statsRaw = localStorage.getItem("userStats");
+            const userStats = statsRaw ? JSON.parse(statsRaw) : { workoutCompletions: 0 };
+            const currentCompletions = userStats.workoutCompletions || 0;
+            userStats.workoutCompletions = Math.max(0, currentCompletions - 1);
+            delete userStats.lastWorkoutDate;
+            localStorage.setItem("userStats", JSON.stringify(userStats));
+            localStorage.removeItem('workoutExercises');
+            setWorkoutCompletedToday(false);
+             toast({
+                title: "Workout Reset",
+                description: "Your workout for today has been reset.",
+            });
+        } catch (error) {
+            console.error("Failed to reset workout stats", error);
+        }
+    }
   };
 
   const handleExerciseCheck = (id: string) => {
@@ -180,7 +210,7 @@ export default function WorkoutTracker() {
         <div className="flex flex-col items-center gap-4">
           <CircularProgress progress={progressPercentage} timeLeft={timeLeft} />
           <div className="flex justify-center gap-4">
-            <Button onClick={toggleTimer} size="lg">
+            <Button onClick={toggleTimer} size="lg" disabled={workoutCompletedToday}>
               {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
               {isActive ? "Pause" : "Start"}
             </Button>
@@ -200,7 +230,7 @@ export default function WorkoutTracker() {
                         onCheckedChange={() => handleExerciseCheck(exercise.id)}
                         disabled={workoutCompletedToday}
                     />
-                    <Label htmlFor={exercise.id} className={`flex-1 ${exercise.done ? 'line-through text-muted-foreground' : ''}`}>
+                    <Label htmlFor={exercise.id} className={`flex-1 ${exercise.done ? 'line-through text-muted-foreground' : ''} ${workoutCompletedToday ? 'cursor-not-allowed' : ''}`}>
                         {exercise.name}
                     </Label>
                 </div>
