@@ -18,10 +18,18 @@ import {
   Vegan,
   Code,
   BookOpenCheck,
+  User,
 } from 'lucide-react';
 import PageHeader from '@/components/page-header';
 
 const features = [
+  {
+    icon: <User className="w-8 h-8 text-primary" />,
+    title: 'Profile',
+    description: 'View your progress and earned medals.',
+    href: '/profile',
+    color: 'hover:border-yellow-300',
+  },
   {
     icon: <Droplets className="w-8 h-8 text-primary" />,
     title: 'Hydration Reminder',

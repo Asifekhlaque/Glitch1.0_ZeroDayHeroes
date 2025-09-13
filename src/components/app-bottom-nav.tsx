@@ -8,6 +8,7 @@ import {
   UtensilsCrossed,
   Dumbbell,
   Flower2,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +17,7 @@ const navItems = [
   { href: "/diet", icon: UtensilsCrossed, label: "Diet" },
   { href: "/workout", icon: Dumbbell, label: "Workout" },
   { href: "/meditation", icon: Flower2, label: "Meditation" },
-  { href: "/hydration", icon: Droplets, label: "Hydration" },
+  { href: "/profile", icon: User, label: "Profile" },
 ];
 
 export default function AppBottomNav() {

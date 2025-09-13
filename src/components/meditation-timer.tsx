@@ -138,6 +138,17 @@ export default function MeditationTimer() {
         title: "Congratulations!",
         description: "You have completed your Meditation.",
       });
+
+      // Track meditation completion
+      try {
+        const stats = localStorage.getItem("userStats");
+        const userStats = stats ? JSON.parse(stats) : { meditationCompletions: 0 };
+        userStats.meditationCompletions += 1;
+        localStorage.setItem("userStats", JSON.stringify(userStats));
+      } catch (error) {
+        console.error("Failed to update meditation stats in localStorage", error);
+      }
+
       if (gainRef.current && audioContextRef.current) {
         gainRef.current.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + 0.5);
       }

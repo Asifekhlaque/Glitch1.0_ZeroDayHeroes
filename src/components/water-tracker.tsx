@@ -2,11 +2,11 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import ReactMarkdown from "react-markdown";
-import { format, startOfDay } from "date-fns";
+import { format, startOfDay, subDays } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -50,7 +50,7 @@ const formSchema = z.object({
   feedback: z.string().optional(),
 });
 
-type WaterData = {
+export type WaterData = {
   date: string;
   goal: number;
   intake: number;
@@ -79,7 +79,7 @@ export default function WaterTracker() {
     setIsMounted(true);
     try {
       const savedHistory = localStorage.getItem("waterHistory");
-      const history = savedHistory ? JSON.parse(savedHistory) : [];
+      const history: WaterData[] = savedHistory ? JSON.parse(savedHistory) : [];
       setWaterHistory(history);
 
       const todayData = history.find((d: WaterData) => d.date === todayStr);
@@ -99,6 +99,13 @@ export default function WaterTracker() {
           });
         }
       }
+       // After loading, calculate and save streak
+      const streak = calculateHydrationStreak(history);
+      const stats = localStorage.getItem("userStats");
+      const userStats = stats ? JSON.parse(stats) : { meditationCompletions: 0 };
+      userStats.hydrationStreak = streak;
+      localStorage.setItem("userStats", JSON.stringify(userStats));
+
     } catch (error) {
       console.error("Failed to load water history from localStorage", error);
     }
@@ -111,37 +118,73 @@ export default function WaterTracker() {
     return Math.min((intake / goal) * 100, 100);
   }, [form.watch("goal"), form.watch("currentIntake")]);
 
+  const calculateHydrationStreak = (history: WaterData[]) => {
+    let streak = 0;
+    const sortedHistory = [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    
+    // Check if today's goal is met
+    const todayEntry = sortedHistory.find(entry => entry.date === todayStr);
+    if (todayEntry && todayEntry.intake >= todayEntry.goal) {
+        streak++;
+    } else if (todayEntry) {
+        // if today's goal is not met, streak from yesterday is broken.
+        return 0; 
+    }
+
+    // Check previous consecutive days
+    for (let i = 1; i < sortedHistory.length + 1; i++) {
+        const dateToCheck = format(subDays(new Date(todayStr), i), "yyyy-MM-dd");
+        const entry = sortedHistory.find(d => d.date === dateToCheck);
+
+        if (entry && entry.intake >= entry.goal) {
+            streak++;
+        } else {
+            break; // Streak is broken
+        }
+    }
+    return streak;
+  }
+
   // Save to localStorage whenever data changes
   useEffect(() => {
     if (!isMounted) return;
     try {
-      const values = form.getValues();
-      const updatedHistory = [...waterHistory];
-      const todayIndex = updatedHistory.findIndex(d => d.date === todayStr);
+      const subscription = form.watch((values) => {
+          const updatedHistory = [...waterHistory];
+          const todayIndex = updatedHistory.findIndex(d => d.date === todayStr);
 
-      const todayData: WaterData = {
-        date: todayStr,
-        goal: values.goal,
-        intake: values.currentIntake,
-        feedback: values.feedback,
-      };
+          const todayData: WaterData = {
+            date: todayStr,
+            goal: values.goal || 2.0,
+            intake: values.currentIntake || 0,
+            feedback: values.feedback || "",
+          };
 
-      if (todayIndex > -1) {
-        updatedHistory[todayIndex] = todayData;
-      } else {
-        updatedHistory.push(todayData);
-      }
-      
-      // Sort by date just in case
-      updatedHistory.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      
-      localStorage.setItem("waterHistory", JSON.stringify(updatedHistory));
-      setWaterHistory(updatedHistory);
+          if (todayIndex > -1) {
+            updatedHistory[todayIndex] = todayData;
+          } else {
+            updatedHistory.push(todayData);
+          }
+          
+          // Sort by date just in case
+          updatedHistory.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          
+          localStorage.setItem("waterHistory", JSON.stringify(updatedHistory));
+          setWaterHistory(updatedHistory);
+
+          // Update streak
+          const streak = calculateHydrationStreak(updatedHistory);
+          const stats = localStorage.getItem("userStats");
+          const userStats = stats ? JSON.parse(stats) : { meditationCompletions: 0 };
+          userStats.hydrationStreak = streak;
+          localStorage.setItem("userStats", JSON.stringify(userStats));
+      });
+      return () => subscription.unsubscribe();
 
     } catch (error) {
       console.error("Failed to save water history to localStorage", error);
     }
-  }, [form.watch("goal"), form.watch("currentIntake"), form.watch("feedback"), isMounted]);
+  }, [form.watch, waterHistory, isMounted, todayStr]);
 
   const handleIntakeChange = (amount: number) => {
     const currentIntake = form.getValues("currentIntake");

@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -9,6 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
@@ -18,10 +18,13 @@ import {
   Flower2,
   BedDouble,
   Activity,
+  User,
+  LogOut,
 } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/profile", icon: User, label: "Profile" },
   { href: "/hydration", icon: Droplets, label: "Hydration" },
   { href: "/diet", icon: UtensilsCrossed, label: "Diet" },
   { href: "/workout", icon: Dumbbell, label: "Workout" },
@@ -58,6 +61,16 @@ export default function AppSidebar() {
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
+       <SidebarFooter className="p-2">
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild tooltip="Logout">
+            <Link href="/login">
+              <LogOut />
+              <span>Logout</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarFooter>
     </Sidebar>
   );
 }
