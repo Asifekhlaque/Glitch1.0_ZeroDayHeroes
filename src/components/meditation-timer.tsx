@@ -16,6 +16,24 @@ import { useToast } from "@/hooks/use-toast";
 
 const MEDITATION_DURATION = 120; // 2 minutes in seconds
 
+const medalTiers = {
+  0: { name: 'No Medal', color: 'text-gray-400', level: 0 },
+  1: { name: 'Bronze', color: 'text-yellow-600', level: 1 },
+  2: { name: 'Silver', color: 'text-gray-400', level: 2 },
+  3: { name: 'Gold', color: 'text-yellow-400', level: 3 },
+  4: { name: 'Diamond', color: 'text-blue-400', level: 4 },
+  5: { name: 'Expert', color: 'text-purple-500', level: 5 },
+};
+
+const getMedalForCompletions = (completions: number) => {
+  if (completions >= 5) return medalTiers[5];
+  if (completions >= 4) return medalTiers[4];
+  if (completions >= 3) return medalTiers[3];
+  if (completions >= 2) return medalTiers[2];
+  if (completions >= 1) return medalTiers[1];
+  return medalTiers[0];
+};
+
 const CircularProgress = ({ progress, timeLeft }: { progress: number, timeLeft: number }) => {
   const radius = 90;
   const circumference = 2 * Math.PI * radius;
@@ -134,19 +152,37 @@ export default function MeditationTimer() {
     } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
       playCompletionSound();
-      toast({
-        title: "Congratulations!",
-        description: "You have completed your Meditation.",
-      });
-
-      // Track meditation completion
+      
       try {
-        const stats = localStorage.getItem("userStats");
-        const userStats = stats ? JSON.parse(stats) : { meditationCompletions: 0 };
-        userStats.meditationCompletions += 1;
+        const statsRaw = localStorage.getItem("userStats");
+        const userStats = statsRaw ? JSON.parse(statsRaw) : { meditationCompletions: 0 };
+        const oldCompletions = userStats.meditationCompletions || 0;
+        const newCompletions = oldCompletions + 1;
+
+        const oldMedal = getMedalForCompletions(oldCompletions);
+        const newMedal = getMedalForCompletions(newCompletions);
+
+        userStats.meditationCompletions = newCompletions;
         localStorage.setItem("userStats", JSON.stringify(userStats));
+        
+        if (newMedal.level > oldMedal.level) {
+            toast({
+                title: `🏅 New Medal Unlocked: ${newMedal.name}!`,
+                description: `You've completed ${newCompletions} meditation session${newCompletions > 1 ? 's' : ''}. Amazing work!`,
+            });
+        } else {
+             toast({
+                title: "Congratulations!",
+                description: "You have completed your meditation session.",
+            });
+        }
+
       } catch (error) {
         console.error("Failed to update meditation stats in localStorage", error);
+        toast({
+            title: "Congratulations!",
+            description: "You have completed your meditation session.",
+        });
       }
 
       if (gainRef.current && audioContextRef.current) {
@@ -172,6 +208,7 @@ export default function MeditationTimer() {
 
     if (isFinished) {
       resetTimer();
+      setIsActive(true);
       return;
     }
 
@@ -216,7 +253,7 @@ export default function MeditationTimer() {
   const getButtonContent = () => {
       if (isFinished) {
           return {
-              icon: <RotateCcw className="mr-2" />,
+              icon: <Play className="mr-2" />,
               text: "Start Over"
           };
       }
@@ -228,7 +265,7 @@ export default function MeditationTimer() {
       }
       return {
           icon: <Play className="mr-2" />,
-          text: "Start"
+          text: hasStarted ? "Resume" : "Start"
       };
   }
 

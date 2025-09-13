@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Droplet, Goal, Plus, Minus, Edit, Trash, Save, X } from "lucide-react";
+import { Droplet, Goal, Plus, Minus, Edit, Trash, Save, X, Medal } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -56,6 +56,24 @@ export type WaterData = {
   intake: number;
   feedback?: string;
 };
+
+const medalTiers = {
+  0: { name: 'No Medal', color: 'text-gray-400', level: 0 },
+  1: { name: 'Bronze', color: 'text-yellow-600', level: 1 },
+  2: { name: 'Silver', color: 'text-gray-400', level: 2 },
+  3: { name: 'Gold', color: 'text-yellow-400', level: 3 },
+  4: { name: 'Diamond', color: 'text-blue-400', level: 4 },
+  5: { name: 'Expert', color: 'text-purple-500', level: 5 },
+};
+
+const getMedalForStreak = (streak: number) => {
+    if (streak >= 5) return medalTiers[5];
+    if (streak >= 4) return medalTiers[4];
+    if (streak >= 3) return medalTiers[3];
+    if (streak >= 2) return medalTiers[2];
+    if (streak >= 1) return medalTiers[1];
+    return medalTiers[0];
+}
 
 export default function WaterTracker() {
   const [isMounted, setIsMounted] = useState(false);
@@ -111,12 +129,12 @@ export default function WaterTracker() {
     }
   }, [todayStr, form]);
 
+  const { goal: currentGoal, currentIntake } = form.watch();
+
   const progress = useMemo(() => {
-    const goal = form.watch("goal");
-    const intake = form.watch("currentIntake");
-    if (goal === 0) return 0;
-    return Math.min((intake / goal) * 100, 100);
-  }, [form.watch("goal"), form.watch("currentIntake")]);
+    if (currentGoal === 0) return 0;
+    return Math.min((currentIntake / currentGoal) * 100, 100);
+  }, [currentGoal, currentIntake]);
 
   const calculateHydrationStreak = (history: WaterData[]) => {
     let streak = 0;
@@ -153,6 +171,10 @@ export default function WaterTracker() {
           const updatedHistory = [...waterHistory];
           const todayIndex = updatedHistory.findIndex(d => d.date === todayStr);
 
+          const oldStatsRaw = localStorage.getItem("userStats");
+          const oldStats = oldStatsRaw ? JSON.parse(oldStatsRaw) : { hydrationStreak: 0 };
+          const oldMedal = getMedalForStreak(oldStats.hydrationStreak || 0);
+
           const todayData: WaterData = {
             date: todayStr,
             goal: values.goal || 2.0,
@@ -173,10 +195,19 @@ export default function WaterTracker() {
           setWaterHistory(updatedHistory);
 
           // Update streak
-          const streak = calculateHydrationStreak(updatedHistory);
+          const newStreak = calculateHydrationStreak(updatedHistory);
+          const newMedal = getMedalForStreak(newStreak);
+
+          if (newMedal.level > oldMedal.level) {
+              toast({
+                  title: `🏅 New Medal Unlocked: ${newMedal.name}!`,
+                  description: `You've kept your hydration streak for ${newStreak} day${newStreak > 1 ? 's' : ''}. Keep it up!`,
+              });
+          }
+
           const stats = localStorage.getItem("userStats");
           const userStats = stats ? JSON.parse(stats) : { meditationCompletions: 0 };
-          userStats.hydrationStreak = streak;
+          userStats.hydrationStreak = newStreak;
           localStorage.setItem("userStats", JSON.stringify(userStats));
       });
       return () => subscription.unsubscribe();
@@ -184,7 +215,7 @@ export default function WaterTracker() {
     } catch (error) {
       console.error("Failed to save water history to localStorage", error);
     }
-  }, [form.watch, waterHistory, isMounted, todayStr]);
+  }, [form.watch, waterHistory, isMounted, todayStr, toast]);
 
   const handleIntakeChange = (amount: number) => {
     const currentIntake = form.getValues("currentIntake");
@@ -217,6 +248,8 @@ export default function WaterTracker() {
   if (!isMounted) {
     return null; // Or a loading skeleton
   }
+
+  const goalMet = currentIntake >= currentGoal && currentGoal > 0;
 
   return (
     <>
@@ -254,7 +287,7 @@ export default function WaterTracker() {
                     <div className="flex justify-between items-baseline">
                         <Label>Today's Progress</Label>
                         <span className="text-sm font-bold text-primary">
-                            {form.watch("currentIntake").toFixed(1)}L / {form.watch("goal").toFixed(1)}L
+                            {currentIntake.toFixed(1)}L / {currentGoal.toFixed(1)}L
                         </span>
                     </div>
                     <Progress value={progress} className="w-full" />
@@ -269,19 +302,21 @@ export default function WaterTracker() {
                         <Plus className="w-5 h-5"/>
                     </Button>
                 </div>
-                 <FormField
-                    control={form.control}
-                    name="feedback"
-                    render={({ field }) => (
-                    <FormItem className="w-full">
-                        <FormLabel>Today's Feedback</FormLabel>
-                        <FormControl>
-                            <Textarea placeholder="How did you feel about your hydration today?" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
+                 {goalMet && (
+                    <FormField
+                        control={form.control}
+                        name="feedback"
+                        render={({ field }) => (
+                        <FormItem className="w-full animate-in fade-in-50 duration-500">
+                            <FormLabel>Today's Feedback</FormLabel>
+                            <FormControl>
+                                <Textarea placeholder="Great job! How do you feel?" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                 )}
             </CardContent>
         </Form>
       </Card>
