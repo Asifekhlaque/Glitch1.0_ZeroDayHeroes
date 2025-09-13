@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Play, Pause, RotateCcw, Dumbbell } from "lucide-react";
+import { Play, Pause, RotateCcw, Dumbbell, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const WORKOUT_DURATION = 25 * 60; // 25 minutes in seconds
@@ -189,6 +189,22 @@ export default function WorkoutTracker() {
     }
   };
 
+  const startNextDay = () => {
+    setIsActive(false);
+    setTimeLeft(WORKOUT_DURATION);
+    setExercises(initialExercises.map(e => ({...e})));
+    setWorkoutCompletedToday(false);
+    try {
+      localStorage.removeItem('workoutExercises');
+    } catch (error) {
+        console.error("Failed to clear exercises for next day", error);
+    }
+    toast({
+      title: "Ready for the Next Round!",
+      description: "You can start your next workout now.",
+    });
+  }
+
   const handleExerciseCheck = (id: string) => {
     setExercises(exercises.map(ex => ex.id === id ? { ...ex, done: !ex.done } : ex));
   };
@@ -238,10 +254,14 @@ export default function WorkoutTracker() {
         </div>
       </CardContent>
        {workoutCompletedToday && (
-        <CardFooter>
-            <p className="text-center w-full text-green-600 font-semibold">
-                You've already completed your workout for today. Great job!
+        <CardFooter className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <p className="text-center text-green-600 font-semibold">
+                You've completed your workout for today. Great job!
             </p>
+            <Button onClick={startNextDay} size="sm">
+                Start Next Day's Workout
+                <ArrowRight className="ml-2"/>
+            </Button>
         </CardFooter>
       )}
     </Card>
