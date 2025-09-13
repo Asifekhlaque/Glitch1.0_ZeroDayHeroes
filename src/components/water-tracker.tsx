@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -91,6 +91,66 @@ export default function WaterTracker() {
       feedback: "",
     },
   });
+  
+  const calculateHydrationStreak = useCallback((history: WaterData[]) => {
+    let streak = 0;
+    const sortedHistory = [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    
+    const todayEntry = sortedHistory.find(entry => entry.date === todayStr);
+    let checkDate = startOfDay(new Date());
+
+    // If today's goal is met, check from today. Otherwise, check from yesterday.
+    if (todayEntry && todayEntry.intake >= todayEntry.goal) {
+       // streak starts today
+    } else {
+       checkDate = subDays(checkDate, 1);
+    }
+    
+    // Check consecutive days backwards
+    for (let i = 0; i < sortedHistory.length; i++) {
+        const dateToCheckStr = format(checkDate, "yyyy-MM-dd");
+        const entry = sortedHistory.find(d => d.date === dateToCheckStr);
+
+        if (entry && entry.intake >= entry.goal) {
+            streak++;
+            checkDate = subDays(checkDate, 1);
+        } else {
+            break; // Streak is broken
+        }
+    }
+    return streak;
+  }, [todayStr]);
+
+  const updateAndSaveHistory = useCallback((newHistory: WaterData[]) => {
+      try {
+        newHistory.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        localStorage.setItem("waterHistory", JSON.stringify(newHistory));
+        setWaterHistory(newHistory);
+
+        const oldStatsRaw = localStorage.getItem("userStats");
+        const oldStats = oldStatsRaw ? JSON.parse(oldStatsRaw) : { hydrationStreak: 0 };
+        const oldMedal = getMedalForStreak(oldStats.hydrationStreak || 0);
+
+        const newStreak = calculateHydrationStreak(newHistory);
+        const newMedal = getMedalForStreak(newStreak);
+
+        if (newMedal.level > oldMedal.level) {
+            toast({
+                title: `🏅 New Medal Unlocked: ${newMedal.name}!`,
+                description: `You've kept your hydration streak for ${newStreak} day${newStreak > 1 ? 's' : ''}. Keep it up!`,
+            });
+        }
+
+        const stats = JSON.parse(localStorage.getItem("userStats") || "{}");
+        stats.hydrationStreak = newStreak;
+        localStorage.setItem("userStats", JSON.stringify(stats));
+
+      } catch (error) {
+        console.error("Failed to save water history to localStorage", error);
+      }
+
+  }, [calculateHydrationStreak, toast]);
+
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -108,7 +168,7 @@ export default function WaterTracker() {
           feedback: todayData.feedback || "",
         });
       } else {
-        const lastData = history[history.length - 1];
+        const lastData = history[0];
         if (lastData) {
           form.reset({
             goal: lastData.goal,
@@ -119,15 +179,14 @@ export default function WaterTracker() {
       }
        // After loading, calculate and save streak
       const streak = calculateHydrationStreak(history);
-      const stats = localStorage.getItem("userStats");
-      const userStats = stats ? JSON.parse(stats) : { meditationCompletions: 0 };
-      userStats.hydrationStreak = streak;
-      localStorage.setItem("userStats", JSON.stringify(userStats));
+      const stats = JSON.parse(localStorage.getItem('userStats') || '{}');
+      stats.hydrationStreak = streak;
+      localStorage.setItem('userStats', JSON.stringify(stats));
 
     } catch (error) {
       console.error("Failed to load water history from localStorage", error);
     }
-  }, [todayStr, form]);
+  }, [todayStr, form, calculateHydrationStreak]);
 
   const { goal: currentGoal, currentIntake } = form.watch();
 
@@ -136,98 +195,54 @@ export default function WaterTracker() {
     return Math.min((currentIntake / currentGoal) * 100, 100);
   }, [currentGoal, currentIntake]);
 
-  const calculateHydrationStreak = (history: WaterData[]) => {
-    let streak = 0;
-    const sortedHistory = [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    
-    // Check if today's goal is met
-    const todayEntry = sortedHistory.find(entry => entry.date === todayStr);
-    if (todayEntry && todayEntry.intake >= todayEntry.goal) {
-        streak++;
-    } else if (todayEntry) {
-        // if today's goal is not met, streak from yesterday is broken.
-        return 0; 
-    }
-
-    // Check previous consecutive days
-    for (let i = 1; i < sortedHistory.length + 1; i++) {
-        const dateToCheck = format(subDays(new Date(todayStr), i), "yyyy-MM-dd");
-        const entry = sortedHistory.find(d => d.date === dateToCheck);
-
-        if (entry && entry.intake >= entry.goal) {
-            streak++;
-        } else {
-            break; // Streak is broken
-        }
-    }
-    return streak;
-  }
-
-  // Save to localStorage whenever data changes
+  // Save goal and intake changes automatically
   useEffect(() => {
     if (!isMounted) return;
-    try {
-      const subscription = form.watch((values) => {
-          const updatedHistory = [...waterHistory];
-          const todayIndex = updatedHistory.findIndex(d => d.date === todayStr);
+    const subscription = form.watch((values, { name }) => {
+        if (name === 'feedback') return; // Exclude feedback from automatic saves
 
-          const oldStatsRaw = localStorage.getItem("userStats");
-          const oldStats = oldStatsRaw ? JSON.parse(oldStatsRaw) : { hydrationStreak: 0 };
-          const oldMedal = getMedalForStreak(oldStats.hydrationStreak || 0);
+        const updatedHistory = [...waterHistory];
+        const todayIndex = updatedHistory.findIndex(d => d.date === todayStr);
 
-          const todayData: WaterData = {
-            date: todayStr,
-            goal: values.goal || 2.0,
-            intake: values.currentIntake || 0,
-            feedback: values.feedback || "",
-          };
+        const todayData: WaterData = {
+          date: todayStr,
+          goal: values.goal || 2.0,
+          intake: values.currentIntake || 0,
+          feedback: (todayIndex > -1 ? updatedHistory[todayIndex].feedback : '') || '',
+        };
 
-          if (todayIndex > -1) {
-            updatedHistory[todayIndex] = todayData;
-          } else {
-            updatedHistory.push(todayData);
-          }
-          
-          // Sort by date just in case
-          updatedHistory.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-          
-          localStorage.setItem("waterHistory", JSON.stringify(updatedHistory));
-          setWaterHistory(updatedHistory);
-
-          // Update streak
-          const newStreak = calculateHydrationStreak(updatedHistory);
-          const newMedal = getMedalForStreak(newStreak);
-
-          if (newMedal.level > oldMedal.level) {
-              toast({
-                  title: `🏅 New Medal Unlocked: ${newMedal.name}!`,
-                  description: `You've kept your hydration streak for ${newStreak} day${newStreak > 1 ? 's' : ''}. Keep it up!`,
-              });
-          }
-
-          const stats = localStorage.getItem("userStats");
-          const userStats = stats ? JSON.parse(stats) : { meditationCompletions: 0 };
-          userStats.hydrationStreak = newStreak;
-          localStorage.setItem("userStats", JSON.stringify(userStats));
-      });
-      return () => subscription.unsubscribe();
-
-    } catch (error) {
-      console.error("Failed to save water history to localStorage", error);
-    }
-  }, [form.watch, waterHistory, isMounted, todayStr, toast]);
+        if (todayIndex > -1) {
+          updatedHistory[todayIndex] = todayData;
+        } else {
+          updatedHistory.push(todayData);
+        }
+        
+        updateAndSaveHistory(updatedHistory);
+    });
+    return () => subscription.unsubscribe();
+  }, [isMounted, waterHistory, todayStr, form, updateAndSaveHistory]);
 
   const handleIntakeChange = (amount: number) => {
     const currentIntake = form.getValues("currentIntake");
     form.setValue("currentIntake", Math.max(0, currentIntake + amount), { shouldDirty: true });
+  };
+  
+  const handleFeedbackSubmit = (values: z.infer<typeof formSchema>) => {
+    const updatedHistory = [...waterHistory];
+    const todayIndex = updatedHistory.findIndex(d => d.date === todayStr);
+
+    if (todayIndex > -1) {
+        updatedHistory[todayIndex].feedback = values.feedback;
+        updateAndSaveHistory(updatedHistory);
+        toast({ title: "Feedback Saved!", description: "Your feedback for today has been saved." });
+    }
   };
 
   const handleSaveFeedback = (date: string, newFeedback: string) => {
     const updatedHistory = waterHistory.map(entry =>
       entry.date === date ? { ...entry, feedback: newFeedback } : entry
     );
-    setWaterHistory(updatedHistory);
-    localStorage.setItem("waterHistory", JSON.stringify(updatedHistory));
+    updateAndSaveHistory(updatedHistory);
     setEditingFeedback(null);
     toast({ title: "Feedback Saved!", description: "Your feedback has been updated." });
   };
@@ -240,8 +255,7 @@ export default function WaterTracker() {
         }
         return entry;
       });
-      setWaterHistory(updatedHistory);
-      localStorage.setItem("waterHistory", JSON.stringify(updatedHistory));
+      updateAndSaveHistory(updatedHistory);
       toast({ title: "Feedback Deleted", description: "Your feedback for that day has been removed." });
   }
 
@@ -254,16 +268,17 @@ export default function WaterTracker() {
   return (
     <>
       <Card className="w-full max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle className="font-headline text-2xl flex items-center gap-2">
-            <Goal className="w-6 h-6 text-primary"/>
-            Daily Water Goal
-          </CardTitle>
-          <CardDescription>
-            Set your goal, track your intake, and see your progress.
-          </CardDescription>
-        </CardHeader>
         <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFeedbackSubmit)}>
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl flex items-center gap-2">
+                <Goal className="w-6 h-6 text-primary"/>
+                Daily Water Goal
+              </CardTitle>
+              <CardDescription>
+                Set your goal, track your intake, and see your progress.
+              </CardDescription>
+            </CardHeader>
             <CardContent className="flex flex-col items-center gap-6">
                 <FormField
                     control={form.control}
@@ -294,30 +309,37 @@ export default function WaterTracker() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={() => handleIntakeChange(-0.25)}>
+                    <Button type="button" variant="outline" size="icon" onClick={() => handleIntakeChange(-0.25)}>
                         <Minus className="w-5 h-5"/>
                     </Button>
                     <Droplet className="w-10 h-10 text-blue-400" />
-                    <Button variant="outline" size="icon" onClick={() => handleIntakeChange(0.25)}>
+                    <Button type="button" variant="outline" size="icon" onClick={() => handleIntakeChange(0.25)}>
                         <Plus className="w-5 h-5"/>
                     </Button>
                 </div>
                  {goalMet && (
-                    <FormField
-                        control={form.control}
-                        name="feedback"
-                        render={({ field }) => (
-                        <FormItem className="w-full animate-in fade-in-50 duration-500">
-                            <FormLabel>Today's Feedback</FormLabel>
-                            <FormControl>
-                                <Textarea placeholder="Great job! How do you feel?" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
+                    <div className="w-full space-y-4 animate-in fade-in-50 duration-500">
+                        <FormField
+                            control={form.control}
+                            name="feedback"
+                            render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Today's Feedback</FormLabel>
+                                <FormControl>
+                                    <Textarea placeholder="Great job! How do you feel?" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <Button type="submit">
+                            <Save className="mr-2 h-4 w-4" />
+                            Save Feedback
+                        </Button>
+                    </div>
                  )}
             </CardContent>
+          </form>
         </Form>
       </Card>
       
@@ -390,3 +412,5 @@ export default function WaterTracker() {
     </>
   );
 }
+
+    
