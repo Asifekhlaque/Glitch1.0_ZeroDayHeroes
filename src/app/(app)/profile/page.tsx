@@ -79,33 +79,6 @@ export default function ProfilePage() {
     const hydrationMedal = getMedalForStreak(hydrationStreak);
     const workoutMedal = getMedalForCompletions(workoutCompletions);
 
-    const handleShare = async (title: string, text: string) => {
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title,
-                    text,
-                    url: window.location.href,
-                });
-            } catch (error: any) {
-                 if (error.name !== 'AbortError') {
-                    console.error("Error sharing:", error);
-                    toast({
-                        variant: "destructive",
-                        title: "Sharing Failed",
-                        description: "Something went wrong while trying to share."
-                    });
-                }
-            }
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Sharing Not Supported",
-                description: "Your browser does not support the Web Share API."
-            });
-        }
-    };
-
   return (
     <ClientOnly>
         <div className="flex flex-col gap-8">
@@ -133,10 +106,33 @@ export default function ProfilePage() {
                     <Button 
                         variant="outline"
                         disabled={meditationMedal.level === 0}
-                        onClick={() => handleShare(
-                            'My Meditation Achievement!',
-                            `I've unlocked the ${meditationMedal.name} medal for Meditation Mastery in LifeBoost with ${meditationCompletions} sessions completed!`
-                        )}
+                        onClick={async () => {
+                            const shareData = {
+                                title: 'My Meditation Achievement!',
+                                text: `I've unlocked the ${meditationMedal.name} medal for Meditation Mastery in LifeBoost with ${meditationCompletions} sessions completed!`,
+                                url: window.location.href,
+                            };
+                            if (navigator.share) {
+                                try {
+                                    await navigator.share(shareData);
+                                } catch (error: any) {
+                                    if (error.name !== 'AbortError') {
+                                        console.error("Error sharing:", error);
+                                        toast({
+                                            variant: "destructive",
+                                            title: "Sharing Failed",
+                                            description: "Something went wrong while trying to share."
+                                        });
+                                    }
+                                }
+                            } else {
+                                toast({
+                                    variant: "destructive",
+                                    title: "Sharing Not Supported",
+                                    description: "Your browser does not support the Web Share API."
+                                });
+                            }
+                        }}
                     >
                         <Share2 className='mr-2' />
                         Share
@@ -161,10 +157,33 @@ export default function ProfilePage() {
                     <Button 
                         variant="outline"
                         disabled={hydrationMedal.level === 0}
-                        onClick={() => handleShare(
-                            'My Hydration Achievement!',
-                            `I've earned the ${hydrationMedal.name} medal for being a Hydration Hero in LifeBoost with a ${hydrationStreak}-day streak!`
-                        )}
+                        onClick={async () => {
+                            const shareData = {
+                                title: 'My Hydration Achievement!',
+                                text: `I've earned the ${hydrationMedal.name} medal for being a Hydration Hero in LifeBoost with a ${hydrationStreak}-day streak!`,
+                                url: window.location.href,
+                            };
+                            if (navigator.share) {
+                                try {
+                                    await navigator.share(shareData);
+                                } catch (error: any) {
+                                    if (error.name !== 'AbortError') {
+                                        console.error("Error sharing:", error);
+                                        toast({
+                                            variant: "destructive",
+                                            title: "Sharing Failed",
+                                            description: "Something went wrong while trying to share."
+                                        });
+                                    }
+                                }
+                            } else {
+                                toast({
+                                    variant: "destructive",
+                                    title: "Sharing Not Supported",
+                                    description: "Your browser does not support the Web Share API."
+                                });
+                            }
+                        }}
                     >
                         <Share2 className='mr-2' />
                         Share
@@ -189,10 +208,33 @@ export default function ProfilePage() {
                      <Button 
                         variant="outline"
                         disabled={workoutMedal.level === 0}
-                        onClick={() => handleShare(
-                            'My Workout Achievement!',
-                            `I'm a Workout Warrior in LifeBoost! I've crushed ${workoutCompletions} workouts and earned the ${workoutMedal.name} medal.`
-                        )}
+                        onClick={async () => {
+                            const shareData = {
+                                title: 'My Workout Achievement!',
+                                text: `I'm a Workout Warrior in LifeBoost! I've crushed ${workoutCompletions} workouts and earned the ${workoutMedal.name} medal.`,
+                                url: window.location.href,
+                            };
+                            if (navigator.share) {
+                                try {
+                                    await navigator.share(shareData);
+                                } catch (error: any) {
+                                    if (error.name !== 'AbortError') {
+                                        console.error("Error sharing:", error);
+                                        toast({
+                                            variant: "destructive",
+                                            title: "Sharing Failed",
+                                            description: "Something went wrong while trying to share."
+                                        });
+                                    }
+                                }
+                            } else {
+                                toast({
+                                    variant: "destructive",
+                                    title: "Sharing Not Supported",
+                                    description: "Your browser does not support the Web Share API."
+                                });
+                            }
+                        }}
                     >
                         <Share2 className='mr-2' />
                         Share
