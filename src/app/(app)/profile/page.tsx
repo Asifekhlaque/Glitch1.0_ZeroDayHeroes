@@ -115,8 +115,9 @@ export default function ProfilePage() {
                             if (navigator.share) {
                                 try {
                                     await navigator.share(shareData);
-                                } catch (error: any) {
-                                    if (error.name !== 'AbortError') {
+                                } catch (error) {
+                                    const errorAny = error as any;
+                                    if (errorAny.name !== 'AbortError') {
                                         console.error("Error sharing:", error);
                                         toast({
                                             variant: "destructive",
@@ -166,8 +167,9 @@ export default function ProfilePage() {
                             if (navigator.share) {
                                 try {
                                     await navigator.share(shareData);
-                                } catch (error: any) {
-                                    if (error.name !== 'AbortError') {
+                                } catch (error) {
+                                    const errorAny = error as any;
+                                    if (errorAny.name !== 'AbortError') {
                                         console.error("Error sharing:", error);
                                         toast({
                                             variant: "destructive",
@@ -217,8 +219,9 @@ export default function ProfilePage() {
                             if (navigator.share) {
                                 try {
                                     await navigator.share(shareData);
-                                } catch (error: any) {
-                                    if (error.name !== 'AbortError') {
+                                } catch (error) {
+                                    const errorAny = error as any;
+                                    if (errorAny.name !== 'AbortError') {
                                         console.error("Error sharing:", error);
                                         toast({
                                             variant: "destructive",
