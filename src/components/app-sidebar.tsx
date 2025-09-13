@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -20,6 +21,7 @@ import {
   Activity,
   User,
   LogOut,
+  Target,
 } from "lucide-react";
 
 const navItems = [
