@@ -92,7 +92,8 @@ export default function MentalBoostPage() {
 
     try {
       const result = await getMentalHealthAssessment(values);
-      setAssessment(result);
+      // Ensure the component re-renders with a unique key for the image if the URL is the same
+      setAssessment({...result, memeImageUrl: `${result.memeImageUrl}?v=${Date.now()}`});
     } catch (error: any) {
        if (error.message && error.message.includes('SERVICE_DISABLED')) {
         const projectIdMatch = error.message.match(/project\/(\d+)/);
@@ -292,12 +293,12 @@ export default function MentalBoostPage() {
                 </CardHeader>
                 <CardContent className="flex flex-col items-center gap-4">
                     <Image 
+                        key={assessment.memeImageUrl}
                         src={assessment.memeImageUrl} 
                         alt={assessment.memeText}
-                        width={400}
-                        height={400}
-                        className="rounded-lg border"
-                        unoptimized={assessment.memeImageUrl.includes('picsum.photos')}
+                        width={800}
+                        height={600}
+                        className="rounded-lg border aspect-[4/3] object-cover"
                         data-ai-hint="funny animal"
                     />
                     <p className="text-center font-semibold text-lg">{assessment.memeText}</p>

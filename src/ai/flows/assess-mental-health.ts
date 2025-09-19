@@ -11,6 +11,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { MEME_IMAGES } from './meme-images';
 
 // Define the input schema for the mental health assessment questionnaire
 const AssessMentalHealthInputSchema = z.object({
@@ -89,9 +90,8 @@ const assessMentalHealthFlow = ai.defineFlow(
         throw new Error("Failed to generate mental health assessment text.");
     }
     
-    // Step 2: Generate a placeholder meme image URL.
-    // We use a placeholder service because the Imagen API requires a billed account.
-    const memeImageUrl = `https://picsum.photos/seed/${encodeURIComponent(textOutput.memeText)}/400/400`;
+    // Step 2: Randomly select a meme image from our curated list.
+    const memeImageUrl = MEME_IMAGES[Math.floor(Math.random() * MEME_IMAGES.length)];
 
     // Step 3: Combine results and return
     return {
