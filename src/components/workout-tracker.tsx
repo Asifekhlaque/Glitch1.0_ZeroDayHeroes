@@ -26,7 +26,6 @@ const initialExercises = [
     { id: "plank", name: "Plank (3 sets of 30-60 seconds)", done: false, type: "core" },
     { id: "jumping-jacks", name: "Jumping Jacks (3 sets of 30-60 seconds)", done: false, type: "core" },
     { id: "lunges", name: "Lunges (3 sets of 10-12 reps per leg)", done: false, type: "core" },
-    { id: "bicep-curls", name: "Bicep Curls (3 sets of 10-12 reps per arm)", done: false, type: "core" },
     { id: "burpees", name: "Burpees (3 sets of 8-10 reps)", done: false, type: "motivated" },
     { id: "mountain-climbers", name: "Mountain Climbers (3 sets of 30-45 seconds)", done: false, type: "motivated" },
 ];
@@ -298,3 +297,5 @@ export default function WorkoutTracker() {
 }
 
   
+
+    
