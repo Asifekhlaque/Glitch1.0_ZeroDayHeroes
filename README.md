@@ -136,7 +136,8 @@ The app enables users to:
 * Talk with the bot anytime to share how you feel.
 * The bot replies with empathetic, supportive, and motivational responses.
 * Acts like a “first listener” before connecting to real professionals.
-  ![AI Chatbot](./images/chatbot.png)
+ <img width="473" height="452" alt="image" src="https://github.com/user-attachments/assets/9849343f-d674-4c60-802a-78f50fc76f40" />
+
 
 ---
 
