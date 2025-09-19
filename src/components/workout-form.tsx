@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { getWorkoutPlan } from "@/lib/actions";
+import { getWorkoutPlan, GenerateWorkoutPlanOutput } from "@/lib/actions";
 import ReactMarkdown from "react-markdown";
 
 import { Button } from "@/components/ui/button";
@@ -34,9 +34,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Sparkles, AlertTriangle } from "lucide-react";
+import { Loader2, Sparkles, AlertTriangle, Dumbbell, CalendarDays, Repeat, CircleDot, Timer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
+import { Badge } from "./ui/badge";
 
 const formSchema = z.object({
   experienceLevel: z.enum(["Beginner", "Intermediate", "Advanced"]),
@@ -46,7 +48,7 @@ const formSchema = z.object({
 });
 
 export default function WorkoutForm() {
-    const [workoutPlan, setWorkoutPlan] = useState<string | null>(null);
+    const [workoutPlan, setWorkoutPlan] = useState<GenerateWorkoutPlanOutput | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
     const [isKeyBlocked, setIsKeyBlocked] = useState(false);
@@ -70,7 +72,7 @@ export default function WorkoutForm() {
 
       try {
         const result = await getWorkoutPlan(values);
-        setWorkoutPlan(result.workoutPlan);
+        setWorkoutPlan(result);
       } catch (error: any) {
         if (error.message && error.message.includes("SERVICE_DISABLED")) {
           const projectIdMatch = error.message.match(/project\/(\d+)/);
@@ -252,15 +254,42 @@ export default function WorkoutForm() {
         {workoutPlan && (
           <Card className="animate-in fade-in-50 duration-500">
             <CardHeader>
-              <CardTitle className="font-headline text-2xl">Your Custom Workout Plan</CardTitle>
+              <CardTitle className="font-headline text-2xl">{workoutPlan.planTitle}</CardTitle>
               <CardDescription>
-                Here's your AI-generated workout. Always prioritize safety and proper form.
+                {workoutPlan.planSummary}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-stone dark:prose-invert max-w-none">
-                <ReactMarkdown>{workoutPlan}</ReactMarkdown>
-              </div>
+              <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
+                {workoutPlan.weeklySchedule.map((day, index) => (
+                  <AccordionItem value={`item-${index}`} key={index}>
+                    <AccordionTrigger className="text-lg font-semibold">
+                      <div className="flex items-center gap-4">
+                        <Badge className="text-sm">{day.day}</Badge>
+                        <span>{day.title}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {day.exercises.length > 0 ? (
+                        <ul className="space-y-4 pl-2 mt-2">
+                          {day.exercises.map((exercise, exIndex) => (
+                            <li key={exIndex} className="p-4 rounded-md bg-muted/50 border">
+                                <p className="font-semibold text-base flex items-center gap-2"><Dumbbell className="w-4 h-4 text-primary"/>{exercise.name}</p>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2 text-sm text-muted-foreground">
+                                  <p className="flex items-center gap-1.5"><Repeat className="w-4 h-4"/> <strong>Sets:</strong> {exercise.sets}</p>
+                                  <p className="flex items-center gap-1.5"><CircleDot className="w-4 h-4"/> <strong>Reps:</strong> {exercise.reps}</p>
+                                  <p className="flex items-center gap-1.5"><Timer className="w-4 h-4"/> <strong>Rest:</strong> {exercise.rest}</p>
+                                </div>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-muted-foreground p-4">Take a well-deserved rest day to recover and grow stronger.</p>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </CardContent>
           </Card>
         )}

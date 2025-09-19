@@ -7,6 +7,7 @@ import {
 import {
   generateWorkoutPlan,
   type GenerateWorkoutPlanInput,
+  type GenerateWorkoutPlanOutput,
 } from "@/ai/flows/generate-workout-plan";
 import {
   assessMentalHealth,
@@ -44,3 +45,6 @@ export async function getMentalHealthAssessment(input: AssessMentalHealthInput) 
   const result = await assessMentalHealth(input);
   return result;
 }
+
+
+export type { GenerateWorkoutPlanOutput };
