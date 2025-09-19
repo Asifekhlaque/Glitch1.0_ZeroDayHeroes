@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import type { Appointment } from '../book-appointment/[doctor]/page';
 import { Stethoscope, Video, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function DoctorDashboardPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -116,10 +117,19 @@ export default function DoctorDashboardPage() {
                     </TableCell>
                     <TableCell>{format(appt.appointmentDate, 'PPP')} at {appt.appointmentTime}</TableCell>
                     <TableCell>
-                        <Badge variant={appt.medium === 'Online' ? 'default' : 'secondary'} className="flex items-center gap-1.5 w-fit">
-                            {appt.medium === 'Online' ? <Video className="w-3.5 h-3.5"/> : <MapPin className="w-3.5 h-3.5"/>}
-                            {appt.medium}
-                        </Badge>
+                        {appt.medium === 'Online' && appt.googleMeet ? (
+                            <Link href={appt.googleMeet} target="_blank" rel="noopener noreferrer">
+                                <Badge variant='default' className="flex items-center gap-1.5 w-fit hover:bg-primary/80">
+                                    <Video className="w-3.5 h-3.5"/>
+                                    {appt.medium}
+                                </Badge>
+                            </Link>
+                        ) : (
+                             <Badge variant={'secondary'} className="flex items-center gap-1.5 w-fit">
+                                <MapPin className="w-3.5 h-3.5"/>
+                                {appt.medium}
+                            </Badge>
+                        )}
                     </TableCell>
                     <TableCell className="max-w-xs truncate">{appt.reason}</TableCell>
                   </TableRow>
