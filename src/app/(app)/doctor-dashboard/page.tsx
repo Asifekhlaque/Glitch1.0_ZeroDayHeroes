@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -40,6 +41,9 @@ export default function DoctorDashboardPage() {
         }));
         // Sort by upcoming appointments first
         appointmentsWithDates.sort((a, b) => {
+            if (!a.appointmentTime || !b.appointmentTime) {
+                return 0;
+            }
             const dateA = new Date(a.appointmentDate);
             dateA.setHours(parseInt(a.appointmentTime.split(':')[0]), parseInt(a.appointmentTime.split(':')[1]));
             const dateB = new Date(b.appointmentDate);
