@@ -55,7 +55,12 @@ What you should NOT do:
 - Do not make promises you can't keep or pretend to be human.
 - Do not engage in arguments or negative conversations. Keep the focus on positive support.
 `,
-  prompt: `Continue the conversation based on the history provided. Here is the latest message from the user: {{{history.slice(-1)[0].parts[0].text}}}`
+   prompt: `{{#each history}}
+{{#if (eq role 'user')}}User: {{parts.0.text}}{{/if}}
+{{#if (eq role 'model')}}AI: {{parts.0.text}}{{/if}}
+{{/each}}
+AI:
+`,
 });
 
 
