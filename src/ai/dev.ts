@@ -3,3 +3,4 @@ config();
 
 import '@/ai/flows/generate-diet-plan.ts';
 import '@/ai/flows/generate-workout-plan.ts';
+import '@/ai/flows/assess-mental-health.ts';

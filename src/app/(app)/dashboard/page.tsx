@@ -7,11 +7,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  Droplets,
+  Stethoscope,
   UtensilsCrossed,
   Dumbbell,
-  Flower2,
-  BedDouble,
+  Brain,
   ArrowRight,
   HeartPulse,
   BrainCircuit,
@@ -19,7 +18,7 @@ import {
   Code,
   BookOpenCheck,
   User,
-  Medal,
+  LayoutDashboard,
 } from 'lucide-react';
 import PageHeader from '@/components/page-header';
 
@@ -32,11 +31,11 @@ const features = [
     color: 'hover:border-yellow-300',
   },
   {
-    icon: <Droplets className="w-8 h-8 text-primary" />,
-    title: 'Hydration Reminder',
-    description: 'Stay hydrated with timely reminders.',
-    href: '/hydration',
-    color: 'hover:border-blue-300',
+    icon: <Brain className="w-8 h-8 text-primary" />,
+    title: 'Mental Boost',
+    description: 'Assess your mental well-being with our AI.',
+    href: '/mental-boost',
+    color: 'hover:border-purple-300',
   },
   {
     icon: <UtensilsCrossed className="w-8 h-8 text-primary" />,
@@ -53,17 +52,17 @@ const features = [
     color: 'hover:border-red-300',
   },
   {
-    icon: <Flower2 className="w-8 h-8 text-primary" />,
-    title: 'Meditation',
-    description: 'Calm your mind with a guided timer.',
-    href: '/meditation',
-    color: 'hover:border-purple-300',
+    icon: <Stethoscope className="w-8 h-8 text-primary" />,
+    title: 'Book Appointment',
+    description: 'Schedule a session with a doctor.',
+    href: '/book-appointment',
+    color: 'hover:border-blue-300',
   },
   {
-    icon: <BedDouble className="w-8 h-8 text-primary" />,
-    title: 'Sleep Schedule',
-    description: 'Set a healthy sleep routine.',
-    href: '/sleep',
+    icon: <LayoutDashboard className="w-8 h-8 text-primary" />,
+    title: 'Doctor Dashboard',
+    description: 'View and manage appointments.',
+    href: '/doctor-dashboard',
     color: 'hover:border-indigo-300',
   },
 ];

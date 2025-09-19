@@ -8,6 +8,10 @@ import {
   generateWorkoutPlan,
   type GenerateWorkoutPlanInput,
 } from "@/ai/flows/generate-workout-plan";
+import {
+  assessMentalHealth,
+  type AssessMentalHealthInput,
+} from "@/ai/flows/assess-mental-health";
 
 /**
  * Server action to generate a personalized diet plan.
@@ -28,5 +32,15 @@ export async function getDietPlan(input: GenerateDietPlanInput) {
  */
 export async function getWorkoutPlan(input: GenerateWorkoutPlanInput) {
   const result = await generateWorkoutPlan(input);
+  return result;
+}
+
+/**
+ * Server action to assess mental health based on user input.
+ * @param input - The user's description of their feelings.
+ * @returns The AI's analysis of their mental state.
+ */
+export async function getMentalHealthAssessment(input: AssessMentalHealthInput) {
+  const result = await assessMentalHealth(input);
   return result;
 }

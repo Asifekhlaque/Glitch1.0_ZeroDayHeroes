@@ -13,25 +13,23 @@ import {
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
-  Droplets,
+  Stethoscope,
   UtensilsCrossed,
   Dumbbell,
-  Flower2,
-  BedDouble,
+  Brain,
   Activity,
   User,
   LogOut,
-  Target,
 } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/profile", icon: User, label: "Profile" },
-  { href: "/hydration", icon: Droplets, label: "Hydration" },
+  { href: "/book-appointment", icon: Stethoscope, label: "Book Appointment" },
+  { href: "/doctor-dashboard", icon: LayoutDashboard, label: "Doctor Dashboard" },
   { href: "/diet", icon: UtensilsCrossed, label: "Diet" },
   { href: "/workout", icon: Dumbbell, label: "Workout" },
-  { href: "/meditation", icon: Flower2, label: "Meditation" },
-  { href: "/sleep", icon: BedDouble, label: "Sleep" },
+  { href: "/mental-boost", icon: Brain, label: "Mental Boost" },
 ];
 
 export default function AppSidebar() {

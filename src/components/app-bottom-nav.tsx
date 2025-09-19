@@ -5,10 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Droplets,
   UtensilsCrossed,
   Dumbbell,
-  Flower2,
+  Brain,
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,7 +16,7 @@ const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/diet", icon: UtensilsCrossed, label: "Diet" },
   { href: "/workout", icon: Dumbbell, label: "Workout" },
-  { href: "/meditation", icon: Flower2, label: "Meditation" },
+  { href: "/mental-boost", icon: Brain, label: "Mental Boost" },
   { href: "/profile", icon: User, label: "Profile" },
 ];
 
