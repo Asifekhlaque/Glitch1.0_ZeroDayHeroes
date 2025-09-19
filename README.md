@@ -104,7 +104,12 @@ The app enables users to:
 * Choose **Online (Google Meet)** or **Offline (Clinic Visit)**
 * Fill details: Name, date, time, and reason for visit.
 * Connect directly with doctors from our trusted list.
-  ![Appointment Booking](./images/appointment.png)
+ <img width="1663" height="621" alt="image" src="https://github.com/user-attachments/assets/a1492b7e-ddad-4f07-a556-dc3bf784151d" />
+ <img width="1597" height="846" alt="image" src="https://github.com/user-attachments/assets/d951467e-9a31-4a67-801d-ca4c2ff5bc32" />
+ <img width="1638" height="436" alt="image" src="https://github.com/user-attachments/assets/4d61c2c5-33b6-4c04-9a5c-8aea03632f13" />
+
+
+
   
 
 
