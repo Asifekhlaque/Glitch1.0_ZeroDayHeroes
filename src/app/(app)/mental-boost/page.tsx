@@ -25,7 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Loader2, Sparkles, AlertTriangle, Lightbulb } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle, Lightbulb, Gift } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -68,6 +68,7 @@ type AssesmentResult = {
   primaryEmotion: string;
   analysis: string;
   suggestion: string;
+  funnyMessage: string;
 };
 
 export default function MentalBoostPage() {
@@ -277,6 +278,14 @@ export default function MentalBoostPage() {
                 <AlertTitle className="font-semibold text-primary">Actionable Suggestion</AlertTitle>
                 <AlertDescription>
                     {assessment.suggestion}
+                </AlertDescription>
+            </Alert>
+            
+            <Alert variant="default" className="bg-green-500/10 border-green-500/50">
+                <Gift className="h-4 w-4 text-green-500" />
+                <AlertTitle className="font-semibold text-green-600">A Little Something to Make You Smile</AlertTitle>
+                <AlertDescription>
+                    {assessment.funnyMessage}
                 </AlertDescription>
             </Alert>
 

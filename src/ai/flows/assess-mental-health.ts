@@ -31,7 +31,8 @@ const AssessMentalHealthOutputSchema = z.object({
     })).describe("An array of scores for different aspects of mental well-being."),
     primaryEmotion: z.string().describe('The primary emotion detected (e.g., Sadness, Anxiety, Calm, Joy).'),
     analysis: z.string().describe("A supportive analysis of the user's feelings and potential patterns."),
-    suggestion: z.string().describe("A single, actionable suggestion for the user to try.")
+    suggestion: z.string().describe("A single, actionable suggestion for the user to try."),
+    funnyMessage: z.string().describe("A lighthearted, funny, and encouraging message to make the user smile. For example: 'Why did the scarecrow win an award? Because he was outstanding in his field! You're doing great too!' or 'Remember, you're a star. A giant, flaming ball of gas, but a star nonetheless!'")
 });
 
 export type AssessMentalHealthOutput = z.infer<typeof AssessMentalHealthOutputSchema>;
@@ -60,6 +61,7 @@ Based on the answers, do the following:
 2. Identify the 'primaryEmotion' from the user's mood description.
 3. Write a brief, supportive 'analysis' of the situation, highlighting potential connections between the answers (e.g., "It seems like high stress might be impacting your sleep...").
 4. Provide one clear, actionable 'suggestion' the user could take to potentially improve their well-being.
+5. Generate a 'funnyMessage' that is lighthearted, encouraging, and designed to bring a smile to the user's face. It can be a short, clean joke or a witty, motivational one-liner.
 `,
 });
 
