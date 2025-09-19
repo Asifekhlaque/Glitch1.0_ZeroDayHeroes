@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { getMentalHealthAssessment } from '@/lib/actions';
+import Image from 'next/image';
 
 import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
@@ -68,7 +69,8 @@ type AssesmentResult = {
   primaryEmotion: string;
   analysis: string;
   suggestion: string;
-  funnyMessage: string;
+  memeText: string;
+  memeImageUrl: string;
 };
 
 export default function MentalBoostPage() {
@@ -230,7 +232,7 @@ export default function MentalBoostPage() {
              <CardTitle className="font-headline text-2xl flex items-center gap-2">
               <Sparkles className="text-primary" /> Analyzing...
             </CardTitle>
-            <CardDescription>Our AI is carefully reviewing your answers. Please wait.</CardDescription>
+            <CardDescription>Our AI is carefully reviewing your answers. This may take a moment, especially when generating your meme.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
              <div className="h-48 bg-muted rounded w-full animate-pulse"></div>
@@ -281,13 +283,25 @@ export default function MentalBoostPage() {
                 </AlertDescription>
             </Alert>
             
-            <Alert variant="default" className="bg-green-500/10 border-green-500/50">
-                <Gift className="h-4 w-4 text-green-500" />
-                <AlertTitle className="font-semibold text-green-600">A Little Something to Make You Smile</AlertTitle>
-                <AlertDescription>
-                    {assessment.funnyMessage}
-                </AlertDescription>
-            </Alert>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                        <Gift className="w-5 h-5 text-green-500" />
+                        A Little Something to Make You Smile
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center gap-4">
+                    <Image 
+                        src={assessment.memeImageUrl} 
+                        alt={assessment.memeText}
+                        width={400}
+                        height={400}
+                        className="rounded-lg border"
+                        unoptimized
+                    />
+                    <p className="text-center font-semibold text-lg">{assessment.memeText}</p>
+                </CardContent>
+            </Card>
 
              <Alert>
                 <AlertTriangle className="h-4 w-4" />
