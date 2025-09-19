@@ -19,8 +19,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import type { Appointment } from '../book-appointment/page';
-import { Stethoscope } from 'lucide-react';
+import type { Appointment } from '../book-appointment/[doctor]/page';
+import { Stethoscope, Video, MapPin } from 'lucide-react';
+import Link from 'next/link';
 
 export default function DoctorDashboardPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -38,7 +39,13 @@ export default function DoctorDashboardPage() {
             appointmentDate: new Date(appt.appointmentDate)
         }));
         // Sort by upcoming appointments first
-        appointmentsWithDates.sort((a, b) => a.appointmentDate.getTime() - b.appointmentDate.getTime());
+        appointmentsWithDates.sort((a, b) => {
+            const dateA = new Date(a.appointmentDate);
+            dateA.setHours(parseInt(a.appointmentTime.split(':')[0]), parseInt(a.appointmentTime.split(':')[1]));
+            const dateB = new Date(b.appointmentDate);
+            dateB.setHours(parseInt(b.appointmentTime.split(':')[0]), parseInt(b.appointmentTime.split(':')[1]));
+            return dateA.getTime() - dateB.getTime();
+        });
         setAppointments(appointmentsWithDates);
       }
     } catch (error) {
@@ -89,9 +96,10 @@ export default function DoctorDashboardPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Patient Name</TableHead>
+                  <TableHead>Patient</TableHead>
                   <TableHead>Doctor</TableHead>
-                  <TableHead>Appointment Date</TableHead>
+                  <TableHead>Date & Time</TableHead>
+                  <TableHead>Medium</TableHead>
                   <TableHead>Reason</TableHead>
                 </TableRow>
               </TableHeader>
@@ -100,10 +108,16 @@ export default function DoctorDashboardPage() {
                   <TableRow key={index}>
                     <TableCell className="font-medium">{appt.patientName}</TableCell>
                     <TableCell>
-                        <Badge variant="outline">{appt.doctor}</Badge>
+                        <Badge variant="outline">{appt.doctorName}</Badge>
                     </TableCell>
-                    <TableCell>{format(appt.appointmentDate, 'PPP')}</TableCell>
-                    <TableCell>{appt.reason}</TableCell>
+                    <TableCell>{format(appt.appointmentDate, 'PPP')} at {appt.appointmentTime}</TableCell>
+                    <TableCell>
+                        <Badge variant={appt.medium === 'Online' ? 'default' : 'secondary'} className="flex items-center gap-1.5 w-fit">
+                            {appt.medium === 'Online' ? <Video className="w-3.5 h-3.5"/> : <MapPin className="w-3.5 h-3.5"/>}
+                            {appt.medium}
+                        </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-xs truncate">{appt.reason}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -111,6 +125,9 @@ export default function DoctorDashboardPage() {
           ) : (
             <div className="text-center py-12 text-muted-foreground">
               <p>There are no appointments scheduled.</p>
+              <Button asChild variant="link">
+                <Link href="/book-appointment">Book one now</Link>
+              </Button>
             </div>
           )}
         </CardContent>
