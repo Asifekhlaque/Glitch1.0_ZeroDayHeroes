@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { SidebarMenuButton } from "./ui/sidebar"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 
 export function ThemeToggle() {
   const { setTheme } = useTheme()
