@@ -20,6 +20,8 @@ import {
   Activity,
   User,
   LogOut,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -64,7 +66,7 @@ export default function AppSidebar() {
       </SidebarMenu>
        <SidebarFooter className="p-2">
         <SidebarMenuItem>
-           <ThemeToggle />
+          <ThemeToggle />
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton asChild tooltip="Logout">
