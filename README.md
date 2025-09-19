@@ -154,4 +154,10 @@ The app enables users to:
 
 * Toggle between light and dark themes.
 * Reduces eye strain and makes the app more comfortable for extended use.
-  ![Dark Light Mode](./images/theme_toggle.png)
+  <img width="1919" height="898" alt="image" src="https://github.com/user-attachments/assets/9f450a7d-7af5-4242-93a7-2df83fb3b60c" />
+  <img width="1919" height="905" alt="image" src="https://github.com/user-attachments/assets/61219c9d-6f00-41ae-b476-48a63e392405" />
+  <img width="357" height="629" alt="image" src="https://github.com/user-attachments/assets/5b0f3935-ac2b-4bab-8fff-409512527329" />
+  <img width="380" height="654" alt="image" src="https://github.com/user-attachments/assets/42a77a59-a5e9-4815-94ff-c089b7556a1c" />
+
+
+
