@@ -21,6 +21,7 @@ import {
   User,
   LogOut,
 } from "lucide-react";
+import { ThemeToggle } from "./theme-toggle";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -62,6 +63,9 @@ export default function AppSidebar() {
         ))}
       </SidebarMenu>
        <SidebarFooter className="p-2">
+        <SidebarMenuItem>
+           <ThemeToggle />
+        </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton asChild tooltip="Logout">
             <Link href="/login">
