@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -11,6 +12,7 @@ import ReactMarkdown from 'react-markdown';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 export default function ChatbotPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,10 +69,19 @@ export default function ChatbotPopup() {
           <Button
             onClick={() => setIsOpen(!isOpen)}
             size="icon"
-            className="rounded-full h-16 w-16 shadow-lg"
+            className="rounded-full h-16 w-16 shadow-lg overflow-hidden p-0"
             aria-label="Open chat"
           >
-            {isOpen ? <X className="h-8 w-8" /> : <MessageSquare className="h-8 w-8" />}
+            {isOpen ? <X className="h-8 w-8" /> : (
+                <Image 
+                    src="https://img.freepik.com/free-vector/cute-robot-holding-heart-cartoon-vector-icon-illustration-science-technology-icon-concept-isolated_138676-5086.jpg"
+                    alt="Chatbot assistant icon"
+                    width={64}
+                    height={64}
+                    className="object-cover"
+                    data-ai-hint="friendly robot"
+                />
+            )}
           </Button>
         </motion.div>
       </div>
