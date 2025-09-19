@@ -92,7 +92,10 @@ The app enables users to:
   * Core exercises
   * Stress-relief movements
   * Short, adaptive routines for all levels
-    ![Workout Plan](./images/workout_plan.png)
+    <img width="1565" height="847" alt="image" src="https://github.com/user-attachments/assets/a5be1691-70de-43a6-947a-afa1182748c7" />
+    <img width="1562" height="891" alt="image" src="https://github.com/user-attachments/assets/a8ee04f3-40ad-4b6b-890c-e38938abb646" />
+
+
 
 ---
 
@@ -102,6 +105,8 @@ The app enables users to:
 * Fill details: Name, date, time, and reason for visit.
 * Connect directly with doctors from our trusted list.
   ![Appointment Booking](./images/appointment.png)
+  
+
 
 ---
 
