@@ -146,7 +146,8 @@ The app enables users to:
 * User profile with personal details.
 * Progress tracking through medals & gamified rewards.
 * Motivation system to encourage consistency.
-  ![Profile & Medals](./images/profile.png)
+  <img width="1068" height="746" alt="image" src="https://github.com/user-attachments/assets/4bddc75a-1a7e-4ef5-a681-1a0899f8f0c5" />
+
 
 ---
 
