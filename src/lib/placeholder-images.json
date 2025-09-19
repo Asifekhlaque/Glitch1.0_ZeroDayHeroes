@@ -1,3 +1,4 @@
+
 {
   "placeholderImages": [
     {
@@ -35,6 +36,18 @@
       "description": "A person doing bicep curls with dumbbells",
       "imageUrl": "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&h=400&fit=crop",
       "imageHint": "man dumbbell"
+    },
+    {
+      "id": "burpees",
+      "description": "A person doing burpees",
+      "imageUrl": "https://img.freepik.com/free-photo/young-fitness-man-doing-burpees-exercise-during-workout-cross-training-gym_651396-1510.jpg?w=740&q=80",
+      "imageHint": "man burpee"
+    },
+    {
+      "id": "mountain-climbers",
+      "description": "A person doing mountain climbers",
+      "imageUrl": "https://img.freepik.com/free-photo/fit-woman-doing-mountain-climbers-exercise_321831-294.jpg?w=740&q=80",
+      "imageHint": "woman mountain climber"
     }
   ]
 }

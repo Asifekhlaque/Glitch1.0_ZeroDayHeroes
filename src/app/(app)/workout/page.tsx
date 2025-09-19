@@ -1,6 +1,8 @@
+
 import PageHeader from "@/components/page-header";
 import WorkoutForm from "@/components/workout-form";
 import WorkoutTracker from "@/components/workout-tracker";
+import BonusChallenges from "@/components/bonus-challenges";
 
 export default function WorkoutPage() {
   return (
@@ -11,6 +13,7 @@ export default function WorkoutPage() {
       />
       <WorkoutForm />
       <WorkoutTracker />
+      <BonusChallenges />
     </div>
   );
 }
