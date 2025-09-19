@@ -24,22 +24,50 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Sparkles, AlertTriangle } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Loader2, Sparkles, AlertTriangle, Lightbulb } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+
+const questions = {
+    mood: {
+        question: "How have you been feeling emotionally lately?",
+        options: ["Overwhelmed or very sad", "Generally down or anxious", "Neutral", "Mostly positive", "Very happy and calm"],
+    },
+    sleep: {
+        question: "How would you rate your sleep quality recently?",
+        options: ["Very poor", "Fair, but restless", "Average", "Good", "Excellent"],
+    },
+    energy: {
+        question: "How have your energy levels been?",
+        options: ["Very low, constantly fatigued", "Low, I tire easily", "Moderate, some ups and downs", "Good, mostly energetic", "High, I feel very active"],
+    },
+    interest: {
+        question: "Have you been enjoying your usual activities?",
+        options: ["Not at all", "Only a little", "Some of the time", "Most of the time", "Definitely"],
+    },
+    stress: {
+        question: "How would you describe your current stress level?",
+        options: ["Extremely high", "High", "Moderate", "Low", "Very low"],
+    }
+} as const;
 
 const formSchema = z.object({
-  description: z
-    .string()
-    .min(10, 'Please describe your feelings in at least 10 characters.'),
+  mood: z.string({ required_error: "Please select an option for your mood." }),
+  sleep: z.string({ required_error: "Please select an option for your sleep." }),
+  energy: z.string({ required_error: "Please select an option for your energy." }),
+  interest: z.string({ required_error: "Please select an option for your interest." }),
+  stress: z.string({ required_error: "Please select an option for your stress." }),
 });
 
 type AssesmentResult = {
-  isDistressed: boolean;
+  scores: { name: string; score: number }[];
   primaryEmotion: string;
   analysis: string;
+  suggestion: string;
 };
 
 export default function MentalBoostPage() {
@@ -51,9 +79,6 @@ export default function MentalBoostPage() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      description: '',
-    },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -85,12 +110,19 @@ export default function MentalBoostPage() {
       setIsLoading(false);
     }
   }
+  
+  const chartConfig = {
+    score: {
+      label: "Score",
+      color: "hsl(var(--primary))",
+    },
+  } satisfies ChartConfig;
 
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
         title="Mental Boost"
-        subtitle="A safe space to understand your feelings with AI."
+        subtitle="Answer a few questions for a snapshot of your well-being."
       />
 
        {apiError && (
@@ -136,30 +168,42 @@ export default function MentalBoostPage() {
           <Card>
             <CardHeader>
               <CardTitle className="font-headline text-2xl">
-                How are you feeling today?
+                Wellness Questionnaire
               </CardTitle>
               <CardDescription>
-                Describe your current emotional state. The AI will provide a supportive analysis. This is not a medical diagnosis.
+                Your answers are private and used to generate a personal analysis.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Your Feelings</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="For example: I've been feeling really anxious about work lately and it's hard to focus..."
-                        className="min-h-[120px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <CardContent className="space-y-8">
+              {(Object.keys(questions) as Array<keyof typeof questions>).map((key) => (
+                 <FormField
+                    key={key}
+                    control={form.control}
+                    name={key}
+                    render={({ field }) => (
+                    <FormItem className="space-y-3">
+                        <FormLabel className="font-semibold text-base">{questions[key].question}</FormLabel>
+                        <FormControl>
+                        <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="flex flex-col space-y-2"
+                        >
+                            {questions[key].options.map((option) => (
+                                <FormItem key={option} className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                        <RadioGroupItem value={option} />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">{option}</FormLabel>
+                                </FormItem>
+                            ))}
+                        </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+              ))}
             </CardContent>
             <CardFooter>
               <Button
@@ -172,7 +216,7 @@ export default function MentalBoostPage() {
                 ) : (
                   <Sparkles className="mr-2 h-4 w-4" />
                 )}
-                Analyze My Feelings
+                Analyze My Well-being
               </Button>
             </CardFooter>
           </Card>
@@ -185,10 +229,10 @@ export default function MentalBoostPage() {
              <CardTitle className="font-headline text-2xl flex items-center gap-2">
               <Sparkles className="text-primary" /> Analyzing...
             </CardTitle>
-            <CardDescription>Our AI is carefully reviewing what you've shared. Please wait.</CardDescription>
+            <CardDescription>Our AI is carefully reviewing your answers. Please wait.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-             <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
+             <div className="h-48 bg-muted rounded w-full animate-pulse"></div>
              <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
              <div className="h-4 bg-muted rounded w-full animate-pulse"></div>
           </CardContent>
@@ -199,35 +243,53 @@ export default function MentalBoostPage() {
         <Card className="animate-in fade-in-50 duration-500">
           <CardHeader>
             <CardTitle className="font-headline text-2xl">
-              AI-Powered Analysis
+              Your Wellness Report
             </CardTitle>
             <CardDescription>
-              Here's a gentle reflection on your feelings.
+              Here's a snapshot of your well-being based on your answers.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-             <Alert variant={assessment.isDistressed ? 'destructive' : 'default'}>
-                <AlertTriangle className={`h-4 w-4 ${!assessment.isDistressed && 'hidden'}`} />
+          <CardContent className="space-y-6">
+            <div>
+                <h3 className="font-semibold mb-2">Self-Assessment Overview</h3>
+                 <ChartContainer config={chartConfig} className="h-64 w-full">
+                    <ResponsiveContainer>
+                        <BarChart data={assessment.scores} margin={{top: 20, right: 20, bottom: 5, left: -20}}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
+                            <YAxis domain={[0, 10]} tickLine={false} axisLine={false} ticks={[0, 5, 10]} />
+                            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                            <Bar dataKey="score" fill="var(--color-score)" radius={8} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+            </div>
+            
+            <Alert>
                 <AlertTitle className="font-semibold">Primary Emotion: {assessment.primaryEmotion}</AlertTitle>
                 <AlertDescription>
-                  {assessment.isDistressed ? "It sounds like you're going through a tough time." : "It's okay to feel this way."}
+                  {assessment.analysis}
                 </AlertDescription>
             </Alert>
-            <div className="prose prose-stone dark:prose-invert max-w-none">
-                <p>{assessment.analysis}</p>
-            </div>
-            {assessment.isDistressed && (
-                 <Alert>
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Support is Available</AlertTitle>
-                    <AlertDescription>
-                        If you're struggling, talking to a qualified professional can make a big difference. Consider booking an appointment to talk things through.
-                        <Button asChild variant="link" className="p-0 h-auto ml-1">
-                            <Link href="/book-appointment">Book an Appointment</Link>
-                        </Button>
-                    </AlertDescription>
-                </Alert>
-            )}
+            
+            <Alert variant="default" className="bg-primary/10 border-primary/50">
+                <Lightbulb className="h-4 w-4 text-primary" />
+                <AlertTitle className="font-semibold text-primary">Actionable Suggestion</AlertTitle>
+                <AlertDescription>
+                    {assessment.suggestion}
+                </AlertDescription>
+            </Alert>
+
+             <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Support is Available</AlertTitle>
+                <AlertDescription>
+                    This is not a diagnosis. If you're struggling, talking to a qualified professional can make a big difference.
+                    <Button asChild variant="link" className="p-0 h-auto ml-1">
+                        <Link href="/book-appointment">Book an Appointment</Link>
+                    </Button>
+                </AlertDescription>
+            </Alert>
           </CardContent>
         </Card>
       )}
