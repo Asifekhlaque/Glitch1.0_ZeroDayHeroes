@@ -89,20 +89,14 @@ const assessMentalHealthFlow = ai.defineFlow(
         throw new Error("Failed to generate mental health assessment text.");
     }
     
-    // Step 2: Generate the meme image based on the caption
-    const {media} = await ai.generate({
-        model: 'googleai/imagen-4.0-fast-generate-001',
-        prompt: `A cute and funny, safe-for-work meme image to go with the caption: "${textOutput.memeText}". The image should be lighthearted and encouraging. Photographic style.`
-    });
+    // Step 2: Generate a placeholder meme image URL.
+    // We use a placeholder service because the Imagen API requires a billed account.
+    const memeImageUrl = `https://picsum.photos/seed/${encodeURIComponent(textOutput.memeText)}/400/400`;
 
-    if (!media.url) {
-        throw new Error("Failed to generate meme image.");
-    }
-    
     // Step 3: Combine results and return
     return {
         ...textOutput,
-        memeImageUrl: media.url,
+        memeImageUrl,
     };
   }
 );

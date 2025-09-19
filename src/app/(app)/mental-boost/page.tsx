@@ -232,7 +232,7 @@ export default function MentalBoostPage() {
              <CardTitle className="font-headline text-2xl flex items-center gap-2">
               <Sparkles className="text-primary" /> Analyzing...
             </CardTitle>
-            <CardDescription>Our AI is carefully reviewing your answers. This may take a moment, especially when generating your meme.</CardDescription>
+            <CardDescription>Our AI is carefully reviewing your answers. This may take a moment.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
              <div className="h-48 bg-muted rounded w-full animate-pulse"></div>
@@ -297,7 +297,8 @@ export default function MentalBoostPage() {
                         width={400}
                         height={400}
                         className="rounded-lg border"
-                        unoptimized
+                        unoptimized={assessment.memeImageUrl.includes('picsum.photos')}
+                        data-ai-hint="funny animal"
                     />
                     <p className="text-center font-semibold text-lg">{assessment.memeText}</p>
                 </CardContent>
