@@ -123,7 +123,10 @@ The app enables users to:
   * Fitness goals
   * Budget-friendly options
 * Example: Balanced meals rich in mood-boosting nutrients.
-  ![Diet Planner](./images/diet_plan.png)
+  <img width="1586" height="870" alt="image" src="https://github.com/user-attachments/assets/82cc1366-02b0-4795-b17e-c53e968fe93e" />
+  ![Uploading image.png…]()
+
+
 
 ---
 
