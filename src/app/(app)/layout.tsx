@@ -3,6 +3,7 @@ import AppHeader from '@/components/app-header';
 import AppBottomNav from '@/components/app-bottom-nav';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import ClientOnly from '@/components/client-only';
+import ChatbotPopup from '@/components/chatbot-popup';
 
 export default function AppLayout({
   children,
@@ -22,6 +23,7 @@ export default function AppLayout({
       </SidebarInset>
       <ClientOnly>
         <AppBottomNav />
+        <ChatbotPopup />
       </ClientOnly>
     </SidebarProvider>
   );

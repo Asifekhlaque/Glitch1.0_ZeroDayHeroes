@@ -13,6 +13,11 @@ import {
   assessMentalHealth,
   type AssessMentalHealthInput,
 } from "@/ai/flows/assess-mental-health";
+import {
+  chatWithAssistant,
+  type ChatWithAssistantInput,
+} from "@/ai/flows/chat-assistant";
+import {Message} from "genkit";
 
 /**
  * Server action to generate a personalized diet plan.
@@ -46,5 +51,17 @@ export async function getMentalHealthAssessment(input: AssessMentalHealthInput) 
   return result;
 }
 
+/**
+ * Server action for the conversational assistant.
+ * @param input - The user's message and the conversation history.
+ * @returns The AI's response.
+ */
+export async function getChatResponse(input: ChatWithAssistantInput) {
+  const result = await chatWithAssistant(input);
+  return result;
+}
+
+export type ChatMessage = Message<any>;
+export { chatWithAssistant };
 
 export type { GenerateWorkoutPlanOutput };
