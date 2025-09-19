@@ -56,13 +56,9 @@ What you should NOT do:
 - Do not engage in arguments or negative conversations. Keep the focus on positive support.
 `,
    prompt: `{{#each history}}
-{{#if (eq this.role 'user')}}
-User: {{this.parts.0.text}}
-{{else}}
-AI: {{this.parts.0.text}}
-{{/if}}
+{{this.role}}: {{this.parts.0.text}}
 {{/each}}
-AI:
+model:
 `,
 });
 
@@ -75,7 +71,7 @@ const chatAssistantFlow = ai.defineFlow(
   },
   async (input) => {
     const {output} = await chatPrompt({
-      history: input.history,
+      history: input.history.map(m => ({role: m.role === 'model' ? 'model' : 'user', parts: m.parts}))
     });
     return { response: output!.response };
   }
