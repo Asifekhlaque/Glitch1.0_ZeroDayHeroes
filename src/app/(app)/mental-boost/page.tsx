@@ -244,79 +244,91 @@ export default function MentalBoostPage() {
       )}
 
       {assessment && (
-        <Card className="animate-in fade-in-50 duration-500">
-          <CardHeader>
-            <CardTitle className="font-headline text-2xl">
-              Your Wellness Report
-            </CardTitle>
-            <CardDescription>
-              Here's a snapshot of your well-being based on your answers.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-                <h3 className="font-semibold mb-2">Self-Assessment Overview</h3>
-                 <ChartContainer config={chartConfig} className="h-64 w-full">
-                    <ResponsiveContainer>
-                        <BarChart data={assessment.scores} margin={{top: 20, right: 20, bottom: 5, left: -20}}>
-                            <CartesianGrid vertical={false} />
-                            <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
-                            <YAxis domain={[0, 10]} tickLine={false} axisLine={false} ticks={[0, 5, 10]} />
-                            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-                            <Bar dataKey="score" fill="var(--color-score)" radius={8} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </ChartContainer>
-            </div>
-            
-            <Alert>
-                <AlertTitle className="font-semibold">Primary Emotion: {assessment.primaryEmotion}</AlertTitle>
-                <AlertDescription>
-                  {assessment.analysis}
-                </AlertDescription>
-            </Alert>
-            
-            <Alert variant="default" className="bg-primary/10 border-primary/50">
-                <Lightbulb className="h-4 w-4 text-primary" />
-                <AlertTitle className="font-semibold text-primary">Actionable Suggestion</AlertTitle>
-                <AlertDescription>
-                    {assessment.suggestion}
-                </AlertDescription>
-            </Alert>
-            
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl font-semibold">
-                        <Gift className="w-5 h-5 text-green-500" />
-                        A Little Something to Make You Smile
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center gap-4">
-                    <Image 
-                        key={assessment.memeImageUrl}
-                        src={assessment.memeImageUrl} 
-                        alt={assessment.memeText}
-                        width={800}
-                        height={600}
-                        className="rounded-lg border aspect-[4/3] object-cover"
-                        data-ai-hint="funny animal"
-                    />
-                    <p className="text-center font-semibold text-lg">{assessment.memeText}</p>
-                </CardContent>
-            </Card>
+        <div className="space-y-8 animate-in fade-in-50 duration-500">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl">
+                Your Wellness Report
+              </CardTitle>
+              <CardDescription>
+                Here's a snapshot of your well-being based on your answers.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Self-Assessment Overview</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ChartContainer config={chartConfig} className="h-64 w-full">
+                            <ResponsiveContainer>
+                                <BarChart data={assessment.scores} margin={{top: 20, right: 20, bottom: 5, left: -20}}>
+                                    <CartesianGrid vertical={false} />
+                                    <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
+                                    <YAxis domain={[0, 10]} tickLine={false} axisLine={false} ticks={[0, 5, 10]} />
+                                    <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                                    <Bar dataKey="score" fill="var(--color-score)" radius={8} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </ChartContainer>
+                    </CardContent>
+                </Card>
+                
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Analysis & Suggestion</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <Alert>
+                            <AlertTitle className="font-semibold">Primary Emotion: {assessment.primaryEmotion}</AlertTitle>
+                            <AlertDescription>
+                            {assessment.analysis}
+                            </AlertDescription>
+                        </Alert>
+                        <Alert variant="default" className="bg-primary/10 border-primary/50">
+                            <Lightbulb className="h-4 w-4 text-primary" />
+                            <AlertTitle className="font-semibold text-primary">Actionable Suggestion</AlertTitle>
+                            <AlertDescription>
+                                {assessment.suggestion}
+                            </AlertDescription>
+                        </Alert>
+                    </CardContent>
+                </Card>
+            </CardContent>
+          </Card>
+          
+          <Card>
+              <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+                      <Gift className="w-5 h-5 text-green-500" />
+                      A Little Something to Make You Smile
+                  </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center gap-4">
+                  <Image 
+                      key={assessment.memeImageUrl}
+                      src={assessment.memeImageUrl} 
+                      alt={assessment.memeText}
+                      width={800}
+                      height={600}
+                      className="rounded-lg border aspect-[4/3] object-cover"
+                      data-ai-hint="funny animal"
+                  />
+                  <p className="text-center font-semibold text-lg">{assessment.memeText}</p>
+              </CardContent>
+          </Card>
 
-             <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Support is Available</AlertTitle>
-                <AlertDescription>
-                    This is not a diagnosis. If you're struggling, talking to a qualified professional can make a big difference.
-                    <Button asChild variant="link" className="p-0 h-auto ml-1">
-                        <Link href="/book-appointment">Book an Appointment</Link>
-                    </Button>
-                </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
+           <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Support is Available</AlertTitle>
+              <AlertDescription>
+                  This is not a diagnosis. If you're struggling, talking to a qualified professional can make a big difference.
+                  <Button asChild variant="link" className="p-0 h-auto ml-1">
+                      <Link href="/book-appointment">Book an Appointment</Link>
+                  </Button>
+              </AlertDescription>
+          </Alert>
+        </div>
       )}
     </div>
   );
