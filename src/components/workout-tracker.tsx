@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Play, Pause, RotateCcw, Dumbbell, ArrowRight, Flame, Star } from "lucide-react";
+import { Play, Pause, RotateCcw, Dumbbell, ArrowRight, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "./ui/separator";
 
@@ -26,8 +26,6 @@ const initialExercises = [
     { id: "plank", name: "Plank (3 sets of 30-60 seconds)", done: false, type: "core" },
     { id: "jumping-jacks", name: "Jumping Jacks (3 sets of 30-60 seconds)", done: false, type: "core" },
     { id: "lunges", name: "Lunges (3 sets of 10-12 reps per leg)", done: false, type: "core" },
-    { id: "burpees", name: "Burpees (3 sets of 8-10 reps)", done: false, type: "motivated" },
-    { id: "mountain-climbers", name: "Mountain Climbers (3 sets of 30-45 seconds)", done: false, type: "motivated" },
 ];
 
 const medalTiers = {
@@ -154,8 +152,7 @@ export default function WorkoutTracker() {
   }, [isActive, timeLeft, completeWorkout]);
   
   useEffect(() => {
-      const coreExercises = exercises.filter(ex => ex.type === 'core');
-      const allCoreDone = coreExercises.every(ex => ex.done);
+      const allCoreDone = exercises.every(ex => ex.done);
 
       if (allCoreDone) {
           completeWorkout();
@@ -214,9 +211,6 @@ export default function WorkoutTracker() {
   };
 
   const progressPercentage = ((WORKOUT_DURATION - timeLeft) / WORKOUT_DURATION) * 100;
-  
-  const coreExercises = exercises.filter(ex => ex.type === 'core');
-  const motivatedExercises = exercises.filter(ex => ex.type === 'motivated');
 
   return (
     <Card>
@@ -226,7 +220,7 @@ export default function WorkoutTracker() {
           General Workout Session
         </CardTitle>
         <CardDescription>
-          Start the 25-minute timer or check off exercises as you complete them. Complete the core exercises to finish the workout.
+          Start the 25-minute timer or check off exercises as you complete them. Complete all exercises to finish the workout.
         </CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
@@ -248,25 +242,7 @@ export default function WorkoutTracker() {
               <Star className="w-5 h-5 text-yellow-500"/>
               Core Exercises
             </h3>
-            {coreExercises.map(exercise => (
-                <div key={exercise.id} className="flex items-center space-x-2">
-                    <Checkbox
-                        id={exercise.id}
-                        checked={exercise.done}
-                        onCheckedChange={() => handleExerciseCheck(exercise.id)}
-                        disabled={workoutCompletedToday}
-                    />
-                    <Label htmlFor={exercise.id} className={`flex-1 ${exercise.done ? 'line-through text-muted-foreground' : ''} ${workoutCompletedToday ? 'cursor-not-allowed' : ''}`}>
-                        {exercise.name}
-                    </Label>
-                </div>
-            ))}
-            <Separator className="my-4"/>
-            <h3 className="font-semibold text-lg flex items-center gap-2">
-              <Flame className="w-5 h-5 text-orange-500"/>
-              Feeling Motivated?
-            </h3>
-            {motivatedExercises.map(exercise => (
+            {exercises.map(exercise => (
                 <div key={exercise.id} className="flex items-center space-x-2">
                     <Checkbox
                         id={exercise.id}
@@ -295,7 +271,3 @@ export default function WorkoutTracker() {
     </Card>
   );
 }
-
-  
-
-    
