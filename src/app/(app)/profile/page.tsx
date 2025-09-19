@@ -53,7 +53,6 @@ const medalGuide = [
 export default function ProfilePage() {
     const [userName, setUserName] = useState('User');
     const [meditationCompletions, setMeditationCompletions] = useState(0);
-    const [hydrationStreak, setHydrationStreak] = useState(0);
     const [workoutCompletions, setWorkoutCompletions] = useState(0);
     const { toast } = useToast();
 
@@ -67,7 +66,6 @@ export default function ProfilePage() {
             if (stats) {
                 const parsedStats = JSON.parse(stats);
                 setMeditationCompletions(parsedStats.meditationCompletions || 0);
-                setHydrationStreak(parsedStats.hydrationStreak || 0);
                 setWorkoutCompletions(parsedStats.workoutCompletions || 0);
             }
         } catch (error) {
@@ -76,7 +74,6 @@ export default function ProfilePage() {
     }, []);
 
     const meditationMedal = getMedalForCompletions(meditationCompletions);
-    const hydrationMedal = getMedalForStreak(hydrationStreak);
     const workoutMedal = getMedalForCompletions(workoutCompletions);
 
   return (
@@ -87,7 +84,7 @@ export default function ProfilePage() {
             subtitle="Here is a summary of your achievements and journey so far."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <button
                 className="text-left w-full disabled:opacity-50 disabled:cursor-not-allowed group"
                 disabled={meditationMedal.level === 0}
@@ -116,38 +113,6 @@ export default function ProfilePage() {
                     <CardFooter className='justify-center'>
                         <p className="text-sm text-muted-foreground">
                             {meditationMedal.level > 0 ? 'Click to see details' : 'Complete 1 session to earn a medal'}
-                        </p>
-                    </CardFooter>
-                </Card>
-            </button>
-            <button
-                className="text-left w-full disabled:opacity-50 disabled:cursor-not-allowed group"
-                disabled={hydrationMedal.level === 0}
-                onClick={() => {
-                    toast({
-                        title: `🏅 ${hydrationMedal.name} Medal for Hydration!`,
-                        description: `You've earned the ${hydrationMedal.name} medal with a ${hydrationStreak}-day hydration streak. Keep it up!`,
-                    });
-                }}
-                aria-label={`View details for ${hydrationMedal.name} Hydration medal`}
-            >
-                <Card className="flex flex-col h-full transition-shadow group-hover:shadow-lg">
-                    <CardHeader>
-                        <CardTitle className='flex items-center gap-2 font-headline text-2xl'>
-                            <Droplet className='w-6 h-6 text-primary' />
-                            Hydration Hero
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col items-center gap-4 text-center flex-1">
-                        <Medal className={`w-24 h-24 ${hydrationMedal.color}`} />
-                        <p className='text-2xl font-bold'>{hydrationMedal.name}</p>
-                        <p className='text-muted-foreground'>
-                            {hydrationStreak} day streak
-                        </p>
-                    </CardContent>
-                    <CardFooter className='justify-center'>
-                       <p className="text-sm text-muted-foreground">
-                           {hydrationMedal.level > 0 ? 'Click to see details' : 'Reach your goal 1 day to earn a medal'}
                         </p>
                     </CardFooter>
                 </Card>
@@ -196,7 +161,7 @@ export default function ProfilePage() {
                     Here's how you can earn medals and level up your wellness journey.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
                         <Flower2 className="w-5 h-5"/>
@@ -207,20 +172,6 @@ export default function ProfilePage() {
                          <li key={`meditation-${medal.level}`} className="flex items-center gap-2">
                             <Medal className={`w-5 h-5 ${medal.color}`} />
                             <span><span className="font-bold">{medal.name}:</span> Complete {medal.level} session{medal.level > 1 ? 's' : ''}</span>
-                        </li>
-                       ))}
-                    </ul>
-                </div>
-                 <div>
-                    <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
-                        <Droplet className="w-5 h-5"/>
-                        Hydration Hero
-                    </h3>
-                    <ul className="space-y-2 text-muted-foreground">
-                        {medalGuide.map(medal => (
-                         <li key={`hydration-${medal.level}`} className="flex items-center gap-2">
-                            <Medal className={`w-5 h-5 ${medal.color}`} />
-                            <span><span className="font-bold">{medal.name}:</span> Reach goal for {medal.level} day{medal.level > 1 ? 's' : ''} in a row</span>
                         </li>
                        ))}
                     </ul>
@@ -247,5 +198,6 @@ export default function ProfilePage() {
   );
 
     
+
 
 
