@@ -35,7 +35,7 @@ const chatPrompt = ai.definePrompt({
   name: 'chatAssistantPrompt',
   input: {schema: ChatWithAssistantInputSchema},
   output: {schema: ChatWithAssistantOutputSchema},
-  system: `You are a friendly and compassionate AI assistant for an app called LifeBoost. Your purpose is to provide support to users who may be feeling sad, lonely, or need someone to talk to.
+  system: `You are a friendly and compassionate AI assistant for an app called Mental Boost. Your purpose is to provide support to users who may be feeling sad, lonely, or need someone to talk to.
 
 Your tone should be:
 - Empathetic and understanding.

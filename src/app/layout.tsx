@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'LifeBoost – Your Personalized Lifestyle Companion',
+  title: 'Mental Boost – Your Personalized Lifestyle Companion',
   description: 'Your personalized companion for a healthier and more balanced lifestyle. Featuring water reminders, AI-powered diet and workout plans, meditation timers, and sleep schedules.',
 };
 

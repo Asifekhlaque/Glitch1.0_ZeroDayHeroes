@@ -92,7 +92,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
-        title="Welcome to LifeBoost"
+        title="Welcome to Mental Boost"
         subtitle="Your personalized companion for a healthier and balanced lifestyle."
       />
 

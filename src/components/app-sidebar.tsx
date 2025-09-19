@@ -45,7 +45,7 @@ export default function AppSidebar() {
            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
               <Activity className="h-5 w-5 text-primary-foreground" />
             </div>
-            <h1 className="font-headline text-xl font-bold text-foreground">LifeBoost</h1>
+            <h1 className="font-headline text-xl font-bold text-foreground">Mental Boost</h1>
         </div>
       </SidebarHeader>
       <SidebarMenu className="flex-1 p-2">

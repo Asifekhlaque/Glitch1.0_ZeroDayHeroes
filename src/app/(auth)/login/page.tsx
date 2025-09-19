@@ -52,7 +52,7 @@ export default function LoginPage() {
                     <Activity className="h-7 w-7 text-primary-foreground" />
                 </div>
             </div>
-          <CardTitle className="text-3xl font-bold font-headline">Welcome to LifeBoost</CardTitle>
+          <CardTitle className="text-3xl font-bold font-headline">Welcome to Mental Boost</CardTitle>
           <CardDescription>
             Enter your name to start your wellness journey.
           </CardDescription>

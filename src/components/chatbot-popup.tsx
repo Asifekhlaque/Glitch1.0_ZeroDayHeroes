@@ -17,7 +17,7 @@ import Image from 'next/image';
 export default function ChatbotPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', parts: [{ text: "Hi there! I'm your friendly LifeBoost assistant. How are you feeling today?" }] },
+    { role: 'model', parts: [{ text: "Hi there! I'm your friendly Mental Boost assistant. How are you feeling today?" }] },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -97,7 +97,7 @@ export default function ChatbotPopup() {
           >
             <div className="bg-card border shadow-xl rounded-lg flex flex-col h-[60vh]">
               <header className="p-4 border-b">
-                <h3 className="font-bold text-lg text-card-foreground">LifeBoost Assistant</h3>
+                <h3 className="font-bold text-lg text-card-foreground">Mental Boost Assistant</h3>
                 <p className="text-sm text-muted-foreground">I'm here to listen and help.</p>
               </header>
               <ScrollArea className="flex-1" ref={scrollAreaRef}>
