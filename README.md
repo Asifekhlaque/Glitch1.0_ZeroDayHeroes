@@ -124,7 +124,8 @@ The app enables users to:
   * Budget-friendly options
 * Example: Balanced meals rich in mood-boosting nutrients.
   <img width="1586" height="870" alt="image" src="https://github.com/user-attachments/assets/82cc1366-02b0-4795-b17e-c53e968fe93e" />
-  ![Uploading image.png…]()
+  <img width="1551" height="397" alt="image" src="https://github.com/user-attachments/assets/2b2868a4-9125-4080-a1dd-f4f06f27d080" />
+
 
 
 
