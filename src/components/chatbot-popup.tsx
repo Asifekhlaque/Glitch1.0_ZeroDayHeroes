@@ -64,7 +64,7 @@ export default function ChatbotPopup() {
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-24 lg:bottom-6 right-6 z-50">
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Button
             onClick={() => setIsOpen(!isOpen)}
@@ -93,7 +93,7 @@ export default function ChatbotPopup() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-24 right-6 z-40 w-[calc(100vw-3rem)] max-w-sm"
+            className="fixed bottom-44 lg:bottom-24 right-6 z-40 w-[calc(100vw-3rem)] max-w-sm"
           >
             <div className="bg-card border shadow-xl rounded-lg flex flex-col h-[60vh]">
               <header className="p-4 border-b">
