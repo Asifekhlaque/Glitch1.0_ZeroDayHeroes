@@ -19,15 +19,28 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Badge } from '@/components/ui/badge';
 import type { Appointment } from '../book-appointment/[doctor]/page';
-import { Stethoscope, Video, MapPin } from 'lucide-react';
+import { Stethoscope, Video, MapPin, Trash } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DoctorDashboardPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     setIsMounted(true);
@@ -57,6 +70,26 @@ export default function DoctorDashboardPage() {
       console.error('Failed to load appointments from localStorage', error);
     }
   }, []);
+  
+  const handleCancelAppointment = (indexToRemove: number) => {
+    try {
+        const updatedAppointments = appointments.filter((_, index) => index !== indexToRemove);
+        localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+        setAppointments(updatedAppointments);
+        toast({
+            title: 'Appointment Canceled',
+            description: 'The appointment has been successfully removed from your dashboard.',
+        });
+    } catch (error) {
+        console.error('Failed to cancel appointment', error);
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Failed to cancel the appointment. Please try again.',
+        });
+    }
+  }
+
 
   if (!isMounted) {
     return (
@@ -106,6 +139,7 @@ export default function DoctorDashboardPage() {
                   <TableHead>Date & Time</TableHead>
                   <TableHead>Medium</TableHead>
                   <TableHead>Reason</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -132,6 +166,29 @@ export default function DoctorDashboardPage() {
                         )}
                     </TableCell>
                     <TableCell className="max-w-xs truncate">{appt.reason}</TableCell>
+                    <TableCell className="text-right">
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <Trash className="h-4 w-4 text-destructive" />
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently cancel the appointment.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Keep Appointment</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleCancelAppointment(index)}>
+                                    Cancel Appointment
+                                </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
