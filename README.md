@@ -2,8 +2,9 @@
 
 # 🧠 Mental Boost — Patient Intake & App Specification
 
-![Mental Boost Logo](./images/logo.png)
-*(Add your project logo here)*
+<img width="1898" height="911" alt="image" src="https://github.com/user-attachments/assets/bf8d02fe-6f07-4207-8a08-1d81eee95c1a" />
+<img width="393" height="676" alt="image" src="https://github.com/user-attachments/assets/4e09342d-1ade-4390-a03a-9fdb37fee0ba" />
+
 
 ---
 
@@ -74,7 +75,12 @@ The app enables users to:
   * Stress levels
   * Ability to enjoy activities
 * Helps doctors and AI provide meaningful insights.
-  ![Symptom Intake Form](./images/symptom_form.png)
+  <img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/452d085c-3e3f-46d8-b9e6-50893774c5c6" />
+  <img width="1556" height="794" alt="image" src="https://github.com/user-attachments/assets/b67b788f-31f0-4817-a82b-d4b8ddbdcd88" />
+  <img width="1555" height="852" alt="image" src="https://github.com/user-attachments/assets/94801712-da5f-406b-9e55-38adb5f930cf" />
+
+
+
 
 ---
 
