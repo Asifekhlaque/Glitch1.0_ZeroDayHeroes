@@ -56,8 +56,11 @@ What you should NOT do:
 - Do not engage in arguments or negative conversations. Keep the focus on positive support.
 `,
    prompt: `{{#each history}}
-{{#if (eq role 'user')}}User: {{parts.0.text}}{{/if}}
-{{#if (eq role 'model')}}AI: {{parts.0.text}}{{/if}}
+{{#if (eq this.role 'user')}}
+User: {{this.parts.0.text}}
+{{else}}
+AI: {{this.parts.0.text}}
+{{/if}}
 {{/each}}
 AI:
 `,
